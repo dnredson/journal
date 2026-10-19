@@ -3,48 +3,82 @@
 
 \subsection{Review Design}
 
-This study follows a structured literature review process combining broad literature retrieval, automated support for initial screening and classification, targeted full-text evidence extraction, and independent human validation of the classification protocol. The objective is not only to identify evaluation metrics, but also to characterize the object of evaluation, quality dimensions, evaluation mechanisms, and the degree of integration between system stages.
+The review follows a structured, multi-stage process that separates corpus construction, eligibility verification, semantic classification, evidence extraction, and validation. Automated methods are used to support screening and extraction at scale, but the coding protocol is calibrated and audited through independent human review. This design is intended to preserve the breadth required for a survey of a rapidly evolving field while avoiding the treatment of automated classifications as ground truth.
 
-The historical retrieval phase produced 2,662 records across 12 search blocks. Because those records precede the final publication-status audit, this number represents the \emph{retrieved historical corpus}, not the final set of peer-reviewed studies included in the academic synthesis. The historical corpus is frozen at May 25, 2026, and a temporal update is used to capture relevant publications appearing after that date.
+The review is organized into four evidence tracks. The \emph{historical academic corpus} contains studies retrieved during the initial search campaign. A \emph{temporal update} captures publications appearing after the historical cutoff. A \emph{secondary-study track} records surveys and reviews, including whether their own evidence bases mix peer-reviewed and non-peer-reviewed material. Finally, a separate \emph{practice and tooling track} captures evaluation platforms, frameworks, and industry evidence that are relevant to current practice but are not counted as independent peer-reviewed academic evidence.
 
-\subsection{Eligibility Criteria}
+\subsection{Historical Corpus and Temporal Update}
 
-A study is considered \textbf{Core} when it directly evaluates one or more quality dimensions of an LLM or LLM-based system, or explicitly investigates relationships between such dimensions. A study is considered \textbf{Adjacent} when an LLM is primarily used as a tool or component to evaluate an external-domain object, or when its methodology is potentially transferable to LLM quality assessment but LLM-system quality is not the principal object of investigation. Studies without substantive relevance to LLM-system quality assessment are excluded.
+The historical retrieval phase produced 2,662 records distributed across 12 search blocks. File-level deduplication identified 2,561 unique PDFs by SHA-1, corresponding to 60,858 pages in the retrieved archive. These figures describe the historical \emph{retrieved corpus}; they must not be interpreted as the final number of studies included in the academic synthesis because publication status and final eligibility are audited separately.
 
-The presence of an external application domain does not by itself imply an Adjacent classification. A healthcare, energy, IoT, or software-engineering study may be Core if it directly measures the quality of the underlying LLM-based system. Conversely, a study in which an LLM is merely used to estimate or classify properties of an external system is classified as Adjacent unless the LLM contribution is separately evaluated.
+The operational cutoff for the historical corpus is May 25, 2026. The temporal update therefore begins on May 26, 2026 and is rerun before manuscript freeze. To reduce the risk of missing papers affected by indexing delays, the update procedure may include a short overlap with the end of the historical period; duplicates are then removed during metadata and file-level reconciliation.
 
-\subsection{Peer-Review Eligibility}
+Searches are organized around query families rather than a single umbrella string. These families target general LLM evaluation, input and prompt quality, RAG and contextual quality, output evaluation, evaluator reliability, multi-judge approaches, agent evaluation, operational and serving quality, integrated or end-to-end assessment, interoperability and agent protocols, human/expert evaluation, and surveys or reviews.
 
-Peer review is treated as an explicit eligibility criterion for the primary academic corpus. The existence of an arXiv version does not imply exclusion when a peer-reviewed version of record exists. Conversely, preprint-only works, technical reports, theses, white papers, and other non-peer-reviewed material are excluded from the primary academic counts, although relevant material may be retained in a separate supplementary or practice-oriented evidence track.
+% TODO before submission: insert the exact databases, search dates, and complete
+% query strings in a reproducibility table or supplementary appendix.
 
-For secondary studies, we additionally record whether their underlying evidence base is restricted to peer-reviewed literature or mixes peer-reviewed studies with preprints and other grey literature. This distinction prevents the publication status of a secondary study from being implicitly transferred to all evidence synthesized within it.
+\subsection{Peer-Review and Publication-Status Gate}
 
-\subsection{Classification Protocol}
+Peer review is an explicit eligibility criterion for the primary academic corpus. Each candidate study receives a publication-status label distinguishing peer-reviewed journal, conference, or workshop publications from preprint-only manuscripts, theses, technical reports, book chapters, non-archival workshop material, and other grey literature. When the publication status cannot be established reliably, the record is routed to manual verification rather than automatically included or excluded.
 
-For each eligible study, the classification protocol records the study type, primary object of evaluation, quality dimensions, evaluation methods, evaluation protocol, experimental regime, and level of integration.
+The existence of an arXiv or other preprint version is not itself grounds for exclusion. If a peer-reviewed version of record exists, the study remains eligible and the peer-reviewed version is treated as canonical. Conversely, a preprint does not inherit peer-reviewed status because it is cited or discussed by a peer-reviewed survey.
 
-Quality dimensions are coded independently. A component is marked as evaluated only when its quality is explicitly measured or analyzed. The mere presence of a component in the system architecture is insufficient. Thus, using retrieval does not by itself constitute retrieval-quality evaluation, using prompts does not imply input-quality evaluation, and using an LLM judge does not imply evaluation of judge reliability.
+For secondary studies, we additionally record the nature of their underlying evidence base using a secondary-evidence policy. This distinguishes reviews restricted to peer-reviewed literature from reviews that mix peer-reviewed studies with preprints or broader grey literature. The review itself may remain eligible, while the status of the evidence it synthesizes remains visible.
 
-Evaluation methods and their targets are also coded separately. In particular, the use of LLM-as-a-Judge is classified as an evaluation method. Evaluator/judge quality is coded only when the evaluator itself is investigated, for example through consistency, bias, calibration, robustness, agreement, or alignment analyses.
+\subsection{Scope Screening}
 
-\subsection{Levels of Evaluation Integration}
+Scope screening assigns each record to one of three relevance classes. \textbf{Core} studies directly evaluate one or more dimensions of quality of an LLM or LLM-based system, or explicitly investigate relations among those dimensions. \textbf{Adjacent} studies use an LLM primarily as a tool or component for evaluating an external-domain object, or present a transferable evaluation method without making LLM-system quality the principal object of investigation. \textbf{Exclude} is used when the work neither evaluates LLM-system quality nor provides a directly relevant evaluation contribution.
 
-We distinguish four levels of integration.
+This distinction is intentionally independent of application domain. A study in medicine, energy, IoT, education, or software engineering can be Core when it directly evaluates the LLM-based subsystem. Conversely, the presence of an LLM in an application does not make the study Core when the principal outcome concerns an external object and the quality contribution of the LLM is not separately assessed.
+
+\subsection{Coding Scheme}
+
+For each eligible study, the extraction schema records: (i) study type; (ii) primary evaluation object; (iii) quality dimensions; (iv) evaluation methods; (v) evaluation protocols; (vi) experimental regime; (vii) integration level; and (viii) supporting evidence.
+
+Study type distinguishes empirical experiments, surveys or reviews, systematic reviews, benchmarks, framework or method papers, tools or platforms, datasets or resources, conceptual or position papers, case studies, mixed studies, and other designs.
+
+The primary evaluation object is coded separately from the quality dimension. The object identifies whether the study primarily evaluates an LLM-based system, an evaluator or judge, or an external-domain object. Quality dimensions are then coded independently across input/specification, context/retrieval, output, conversation/interaction, agent/process/trajectory, and operational/system quality. Evaluator reliability is represented separately as a meta-evaluation target.
+
+A dimension is marked as evaluated only when its quality is explicitly measured, compared, manipulated, or analyzed. Architectural presence alone is insufficient. Therefore, the use of a prompt does not imply evaluation of input quality; the presence of RAG does not imply evaluation of retrieval quality; deployment does not imply evaluation of operational quality; and the use of an LLM judge does not imply evaluation of judge reliability.
+
+Evaluation methods are recorded independently from their targets. Method families include deterministic or rule-based evaluation, lexical/reference metrics, semantic/reference metrics, learned evaluators, human evaluation, LLM-as-a-Judge, multi-judge or ensemble approaches, task- or environment-based evaluation, adversarial or red-team evaluation, perturbation or mutation testing, trace-aware evaluation, hybrid methods, and statistical reliability/meta-evaluation.
+
+Evaluation protocol is coded separately when identifiable. Protocol categories include absolute scoring, pairwise comparison, ranking, rubric-based scoring, binary classification, critique, preference judgment, and task-success verification. Experimental regime captures distinctions such as offline versus online evaluation, development versus production, component versus end-to-end analysis, black-box versus trace-aware evaluation, single-turn versus multi-turn interaction, reference-based versus reference-free evaluation, and continuous monitoring where applicable.
+
+\subsection{Integration Coding}
+
+Integration is coded independently from multidimensionality. A study that reports several quality metrics is not automatically considered integrated. The integration taxonomy contains four levels:
 
 \begin{description}
-\item[None:] The study evaluates an isolated quality dimension or component without explicitly relating it to other stages.
-\item[Cross-stage:] Two or more lifecycle stages or quality dimensions are explicitly related, compared, or analyzed. Examples include examining the relationship between prompt variation and output quality or between retrieval quality and answer quality.
-\item[Black-box end-to-end:] A multi-stage system or workflow is evaluated from input to final outcome without decomposing the contribution of internal stages.
-\item[Lifecycle-integrated:] At least three lifecycle dimensions or stages are jointly evaluated, including either operational/system quality or evaluator reliability, and the analysis preserves explicit relationships or attribution between stages.
+\item[None:] The study evaluates one component or dimension without explicitly connecting its quality to another lifecycle stage.
+\item[Cross-stage:] At least two lifecycle stages or quality dimensions are explicitly related, compared, or causally analyzed.
+\item[Black-box end-to-end:] A multi-stage workflow is evaluated from input to final outcome without decomposing or attributing the contribution of internal stages.
+\item[Lifecycle-integrated:] At least three lifecycle dimensions or stages are jointly evaluated, including evaluator reliability or operational/system quality, with explicit cross-stage attribution, relation, or joint aggregation.
 \end{description}
 
-This distinction prevents the phrase "end-to-end" from being treated as evidence of integrated quality assessment without considering what is actually measured.
+For integrated claims, we additionally record whether the integration is \emph{used}, \emph{proposed}, or \emph{discussed}. This prevents conceptual frameworks and survey taxonomies from being counted as empirically validated integrated assessments.
+
+\subsection{Evidence Extraction and Full-Text Review}
+
+Title and abstract are used for initial scope and coding decisions when they contain sufficient evidence. Records are escalated to full-text review whenever the abstract does not support a confident classification, when integration claims depend on implementation details, when the role of an evaluator is ambiguous, or when exact metrics and protocols are required.
+
+Full-text extraction is page-aware. Supporting passages are stored with page references and, where possible, exact quotations for later verification. Metrics, datasets, evaluated models, judge models, system components, and explicit cross-stage relationships are recorded separately. This evidence-first representation allows uncertain classifications to be revisited without repeating the complete screening process.
 
 \subsection{Human Calibration and Validation}
 
-Because several classification decisions require semantic interpretation, the coding protocol is independently evaluated by human reviewers using stratified calibration samples. Reviewers classify studies from titles and abstracts without access to the automated classification. Cases for which the abstract is insufficient are explicitly flagged for full-text review rather than forcing a decision.
+The coding scheme is calibrated using three partially overlapping human-review batteries. Each battery contains 40 studies. Twenty studies are shared across the three batteries to support direct inter-reviewer agreement analysis, while twenty studies in each battery are unique in order to increase coverage without requiring every reviewer to classify the same large sample. Thus, each reviewer evaluates 40 studies while the three batteries collectively cover 80 distinct records.
 
-The calibration design uses partially overlapping batches so that a subset of papers is independently classified by multiple reviewers while the remaining papers increase corpus coverage. Reviewer agreement is assessed separately for categorical variables such as relevance and integration level and for individual multi-label quality dimensions. Disagreements are adjudicated and used to refine the coding protocol before large-scale application. Automated classifiers support the process but are not treated as substitutes for independent human validation.
+Reviewers initially classify title and abstract without access to automated labels. They may explicitly mark a case as uncertain or indicate that the abstract is insufficient; such cases are routed to full-text adjudication instead of forcing a categorical decision. The calibration focuses on relevance, primary evaluation object, individual quality dimensions, evaluation methods, whether the evaluator itself is under study, cross-stage relations, end-to-end behavior, integration level, and confidence.
 
-% TODO: After the final human round, report exact sample sizes, overlap,
-% agreement coefficients, disagreement handling, and full-text adjudication rate.
+Agreement is analyzed separately for exclusive categorical variables and multi-label fields. With three independent human reviewers, nominal agreement is summarized using Krippendorff's alpha where appropriate. Multi-label dimensions are evaluated as individual binary decisions rather than collapsed into a single composite category. Human--human agreement is treated as the primary reliability evidence for the coding protocol; automated classifiers are compared with the human consensus separately and are not counted as human raters.
+
+% TODO after calibration: report the final number of adjudicated records,
+% agreement coefficients, uncertainty rate, and any rule changes made before
+% freezing the codebook.
+
+\subsection{Academic Evidence and Practice Evidence}
+
+Peer-reviewed literature and practice-oriented evidence are synthesized separately. Evaluation platforms, vendor documentation, practitioner benchmarks, and independent tool comparisons can provide important evidence about feature coverage, operational behavior, and current workflows, but they are not treated as equivalent to peer-reviewed validation of evaluator correctness. Where tools are discussed, the review therefore distinguishes capability claims, vendor validation, independent practitioner comparisons, independent quantitative benchmarks, and peer-reviewed validation.
+
+This separation is particularly important for evaluation frameworks whose availability and adoption may substantially exceed the amount of published evidence supporting their measurement validity.
