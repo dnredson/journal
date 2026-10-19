@@ -1,0 +1,39 @@
+\section{Background and Scope}
+\label{sec:background}
+
+\subsection{From LLM Evaluation to LLM-System Evaluation}
+
+Traditional language model evaluation primarily focuses on the relationship between an input and a model output. This abstraction remains useful for many tasks, but it is increasingly insufficient for modern LLM applications. An LLM-based system may contain several interacting components before a final result is produced:
+
+\begin{equation}
+x \rightarrow S \rightarrow C \rightarrow P \rightarrow y \rightarrow E,
+\end{equation}
+
+where $x$ represents the original user input, $S$ represents its specification or prompt construction, $C$ represents retrieved or externally supplied context, $P$ denotes the execution process---including reasoning, tools, agents, or trajectories---$y$ represents the resulting output or task outcome, and $E$ denotes the evaluation process.
+
+This representation is intentionally general. Not every LLM-based system contains all stages, and the boundaries between stages vary across architectures. Its purpose is to highlight that observed output quality may depend on several upstream components and that the evaluation mechanism itself introduces an additional layer that may require validation.
+
+\subsection{Quality Dimensions and Evaluation Methods}
+
+A central distinction in this survey is between \emph{what is evaluated} and \emph{how it is evaluated}. For example, the faithfulness of a RAG response is a quality property, whereas an LLM judge used to score that faithfulness is an evaluation method. Likewise, agent task completion is a quality outcome, while execution tests or state matching are evaluation mechanisms.
+
+We therefore organize the literature along two orthogonal axes. The first axis represents the primary quality dimensions:
+
+\begin{enumerate}
+    \item \textbf{Input and Specification Quality};
+    \item \textbf{Context and Retrieval Quality};
+    \item \textbf{Output Quality};
+    \item \textbf{Conversation and Interaction Quality};
+    \item \textbf{Agent, Process, and Trajectory Quality};
+    \item \textbf{Operational and System Quality}.
+\end{enumerate}
+
+Evaluator or judge quality is treated separately as a meta-evaluation dimension because it characterizes the reliability of the measurement mechanism rather than a normal stage of the LLM execution lifecycle.
+
+The second axis represents evaluation methods. The literature includes deterministic and rule-based checks, lexical and reference-based metrics, semantic metrics, learned evaluators, human evaluation, LLM-as-a-Judge, multi-judge or ensemble approaches, task- and environment-based verification, adversarial and red-team testing, perturbation-based evaluation, trace-aware methods, and statistical reliability analysis.
+
+\subsection{Quality Target, Quality Dimension, and Evaluation Method}
+
+Three concepts are kept separate throughout the review. The \emph{evaluation object} denotes what is primarily being assessed, such as an LLM-based system, an evaluator/judge, or an external-domain object. The \emph{quality dimension} denotes the property or lifecycle stage whose quality is under investigation. The \emph{evaluation method} denotes the mechanism used to produce a score, judgment, ranking, or verification outcome.
+
+This distinction is particularly important for domain-specific studies. The presence of an LLM in a healthcare, energy, IoT, or software-engineering pipeline does not automatically imply that LLM quality is being evaluated. Conversely, a domain-specific study may be directly relevant when it independently assesses the quality contribution of the LLM-based subsystem.
