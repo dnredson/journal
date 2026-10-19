@@ -1,0 +1,38 @@
+\documentclass[acmsmall]{acmart}
+
+\citestyle{acmauthoryear}
+
+\title{Towards End-to-End Quality Assessment of LLM-Based Systems:
+A Survey of Quality Dimensions, Evaluation Methods, and Integration}
+
+% TODO: replace with the final author list and affiliations.
+\author{Dener Silva}
+
+\begin{abstract}
+Large Language Models (LLMs) have evolved from standalone text generators into components of increasingly complex software systems that combine prompt engineering, retrieval-augmented generation, tools, memory, multi-agent coordination, and production infrastructure. This evolution has produced an equally fragmented evaluation landscape: different studies assess prompt robustness, retrieval quality, factuality, task success, judge agreement, latency, safety, or cost, often in isolation and with limited visibility into how quality propagates across the complete system lifecycle.
+
+This survey organizes LLM quality assessment around two complementary questions: \emph{what} aspect of an LLM-based system is evaluated and \emph{how} that quality is measured. We distinguish quality dimensions associated with input and specification, context and retrieval, generated output, conversational interaction, agent processes and trajectories, and operational/system behavior. Separately, we organize evaluation mechanisms including deterministic and reference-based metrics, semantic evaluators, learned evaluators, human evaluation, LLM-as-a-Judge, multi-judge approaches, task- and environment-based evaluation, adversarial testing, perturbation-based methods, trace-aware evaluation, and statistical reliability analysis.
+
+Beyond cataloguing individual metrics, we investigate the degree to which existing approaches integrate multiple stages of the LLM lifecycle. We distinguish isolated evaluation, cross-stage assessment, black-box end-to-end evaluation, and lifecycle-integrated evaluation. Evaluator reliability is treated as a meta-evaluation problem rather than as a normal lifecycle stage, allowing the use of an LLM judge to be distinguished from evidence that the judge itself is reliable. The resulting synthesis is intended to clarify how current evaluation practices relate to one another and to identify gaps toward more coherent, traceable, and end-to-end quality assessment of LLM-based systems.
+\end{abstract}
+
+\keywords{Large Language Models, LLM Evaluation, Quality Assessment,
+LLM-as-a-Judge, Retrieval-Augmented Generation, AI Agents,
+End-to-End Evaluation, Reliability}
+
+\begin{document}
+
+\maketitle
+
+\input{sections/01_introduction}
+\input{sections/02_background}
+\input{sections/03_research_questions}
+\input{sections/04_methodology}
+\input{sections/05_taxonomy}
+
+% TODO: evidence-driven synthesis sections after the corpus audit.
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}
