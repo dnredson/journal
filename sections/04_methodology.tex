@@ -1,0 +1,50 @@
+\section{Review Methodology}
+\label{sec:methodology}
+
+\subsection{Review Design}
+
+This study follows a structured literature review process combining broad literature retrieval, automated support for initial screening and classification, targeted full-text evidence extraction, and independent human validation of the classification protocol. The objective is not only to identify evaluation metrics, but also to characterize the object of evaluation, quality dimensions, evaluation mechanisms, and the degree of integration between system stages.
+
+The historical retrieval phase produced 2,662 records across 12 search blocks. Because those records precede the final publication-status audit, this number represents the \emph{retrieved historical corpus}, not the final set of peer-reviewed studies included in the academic synthesis. The historical corpus is frozen at May 25, 2026, and a temporal update is used to capture relevant publications appearing after that date.
+
+\subsection{Eligibility Criteria}
+
+A study is considered \textbf{Core} when it directly evaluates one or more quality dimensions of an LLM or LLM-based system, or explicitly investigates relationships between such dimensions. A study is considered \textbf{Adjacent} when an LLM is primarily used as a tool or component to evaluate an external-domain object, or when its methodology is potentially transferable to LLM quality assessment but LLM-system quality is not the principal object of investigation. Studies without substantive relevance to LLM-system quality assessment are excluded.
+
+The presence of an external application domain does not by itself imply an Adjacent classification. A healthcare, energy, IoT, or software-engineering study may be Core if it directly measures the quality of the underlying LLM-based system. Conversely, a study in which an LLM is merely used to estimate or classify properties of an external system is classified as Adjacent unless the LLM contribution is separately evaluated.
+
+\subsection{Peer-Review Eligibility}
+
+Peer review is treated as an explicit eligibility criterion for the primary academic corpus. The existence of an arXiv version does not imply exclusion when a peer-reviewed version of record exists. Conversely, preprint-only works, technical reports, theses, white papers, and other non-peer-reviewed material are excluded from the primary academic counts, although relevant material may be retained in a separate supplementary or practice-oriented evidence track.
+
+For secondary studies, we additionally record whether their underlying evidence base is restricted to peer-reviewed literature or mixes peer-reviewed studies with preprints and other grey literature. This distinction prevents the publication status of a secondary study from being implicitly transferred to all evidence synthesized within it.
+
+\subsection{Classification Protocol}
+
+For each eligible study, the classification protocol records the study type, primary object of evaluation, quality dimensions, evaluation methods, evaluation protocol, experimental regime, and level of integration.
+
+Quality dimensions are coded independently. A component is marked as evaluated only when its quality is explicitly measured or analyzed. The mere presence of a component in the system architecture is insufficient. Thus, using retrieval does not by itself constitute retrieval-quality evaluation, using prompts does not imply input-quality evaluation, and using an LLM judge does not imply evaluation of judge reliability.
+
+Evaluation methods and their targets are also coded separately. In particular, the use of LLM-as-a-Judge is classified as an evaluation method. Evaluator/judge quality is coded only when the evaluator itself is investigated, for example through consistency, bias, calibration, robustness, agreement, or alignment analyses.
+
+\subsection{Levels of Evaluation Integration}
+
+We distinguish four levels of integration.
+
+\begin{description}
+\item[None:] The study evaluates an isolated quality dimension or component without explicitly relating it to other stages.
+\item[Cross-stage:] Two or more lifecycle stages or quality dimensions are explicitly related, compared, or analyzed. Examples include examining the relationship between prompt variation and output quality or between retrieval quality and answer quality.
+\item[Black-box end-to-end:] A multi-stage system or workflow is evaluated from input to final outcome without decomposing the contribution of internal stages.
+\item[Lifecycle-integrated:] At least three lifecycle dimensions or stages are jointly evaluated, including either operational/system quality or evaluator reliability, and the analysis preserves explicit relationships or attribution between stages.
+\end{description}
+
+This distinction prevents the phrase "end-to-end" from being treated as evidence of integrated quality assessment without considering what is actually measured.
+
+\subsection{Human Calibration and Validation}
+
+Because several classification decisions require semantic interpretation, the coding protocol is independently evaluated by human reviewers using stratified calibration samples. Reviewers classify studies from titles and abstracts without access to the automated classification. Cases for which the abstract is insufficient are explicitly flagged for full-text review rather than forcing a decision.
+
+The calibration design uses partially overlapping batches so that a subset of papers is independently classified by multiple reviewers while the remaining papers increase corpus coverage. Reviewer agreement is assessed separately for categorical variables such as relevance and integration level and for individual multi-label quality dimensions. Disagreements are adjudicated and used to refine the coding protocol before large-scale application. Automated classifiers support the process but are not treated as substitutes for independent human validation.
+
+% TODO: After the final human round, report exact sample sizes, overlap,
+% agreement coefficients, disagreement handling, and full-text adjudication rate.
