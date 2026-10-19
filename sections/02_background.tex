@@ -1,39 +1,55 @@
-\section{Background and Scope}
+\section{Problem Formulation and Scope}
 \label{sec:background}
 
-\subsection{From LLM Evaluation to LLM-System Evaluation}
+\subsection{The Quality-Attribution Problem}
 
-Traditional language model evaluation primarily focuses on the relationship between an input and a model output. This abstraction remains useful for many tasks, but it is increasingly insufficient for modern LLM applications. An LLM-based system may contain several interacting components before a final result is produced:
+Conventional LLM evaluation often treats the system as a function that maps an input to an output. This abstraction is useful for benchmarking isolated capabilities, but it becomes insufficient when an application contains multiple stages whose contributions to the final result are not directly observable. A generalized LLM-based workflow can be represented as
 
 \begin{equation}
 x \rightarrow S \rightarrow C \rightarrow P \rightarrow y \rightarrow E,
 \end{equation}
 
-where $x$ represents the original user input, $S$ represents its specification or prompt construction, $C$ represents retrieved or externally supplied context, $P$ denotes the execution process---including reasoning, tools, agents, or trajectories---$y$ represents the resulting output or task outcome, and $E$ denotes the evaluation process.
+where $x$ denotes the original user request, $S$ its specification or prompt construction, $C$ externally supplied or retrieved context, $P$ the execution process that may include reasoning, tool use, memory, or agent trajectories, $y$ the final response or task outcome, and $E$ the evaluation mechanism.
 
-This representation is intentionally general. Not every LLM-based system contains all stages, and the boundaries between stages vary across architectures. Its purpose is to highlight that observed output quality may depend on several upstream components and that the evaluation mechanism itself introduces an additional layer that may require validation.
+This representation does not imply that every system contains all stages or that they are strictly sequential. Its purpose is to expose a quality-attribution problem: a score observed at $y$ may reflect the combined influence of several upstream components, while the score itself depends on the properties of $E$. A single output-level metric therefore cannot, by itself, establish where quality was gained or lost. This becomes particularly important in RAG and agentic systems, where retrieval, planning, tool use, and execution may each contribute to a final outcome.
 
-\subsection{Quality Dimensions and Evaluation Methods}
+The same issue appears when a system is evaluated only through task success. A successful final outcome does not necessarily imply that the intermediate process was robust, efficient, safe, or reproducible. Conversely, an intermediate failure may be compensated by a later stage. The survey therefore distinguishes between evaluating a final outcome and explicitly attributing quality across stages.
 
-A central distinction in this survey is between \emph{what is evaluated} and \emph{how it is evaluated}. For example, the faithfulness of a RAG response is a quality property, whereas an LLM judge used to score that faithfulness is an evaluation method. Likewise, agent task completion is a quality outcome, while execution tests or state matching are evaluation mechanisms.
+\subsection{Separating Object, Dimension, Method, and Protocol}
 
-We therefore organize the literature along two orthogonal axes. The first axis represents the primary quality dimensions:
+To reduce ambiguity, four concepts are kept separate throughout the review.
 
-\begin{enumerate}
-    \item \textbf{Input and Specification Quality};
-    \item \textbf{Context and Retrieval Quality};
-    \item \textbf{Output Quality};
-    \item \textbf{Conversation and Interaction Quality};
-    \item \textbf{Agent, Process, and Trajectory Quality};
-    \item \textbf{Operational and System Quality}.
-\end{enumerate}
+The \emph{evaluation object} identifies what is primarily under assessment. The object may be an LLM or LLM-based system, an evaluator or judge, or an external-domain object for which an LLM is merely used as a tool. This distinction prevents application-domain studies from being classified as LLM-quality studies solely because an LLM appears in their architecture.
 
-Evaluator or judge quality is treated separately as a meta-evaluation dimension because it characterizes the reliability of the measurement mechanism rather than a normal stage of the LLM execution lifecycle.
+The \emph{quality dimension} identifies the property or lifecycle stage whose quality is being investigated. The taxonomy used in this survey covers input/specification, context/retrieval, output, conversation/interaction, agent/process/trajectory, and operational/system quality. Evaluator reliability is represented separately as a meta-evaluation target.
 
-The second axis represents evaluation methods. The literature includes deterministic and rule-based checks, lexical and reference-based metrics, semantic metrics, learned evaluators, human evaluation, LLM-as-a-Judge, multi-judge or ensemble approaches, task- and environment-based verification, adversarial and red-team testing, perturbation-based evaluation, trace-aware methods, and statistical reliability analysis.
+The \emph{evaluation method} identifies the mechanism that produces a judgment or score. Examples include deterministic rules, lexical or semantic metrics, learned evaluators, human assessment, LLM-as-a-Judge, multi-judge schemes, execution-based verification, adversarial testing, perturbation-based evaluation, trace-aware methods, and statistical reliability analysis.
 
-\subsection{Quality Target, Quality Dimension, and Evaluation Method}
+The \emph{evaluation protocol} describes how the method is applied, for example through absolute scoring, pairwise comparison, ranking, rubric-based scoring, binary classification, critique, preference judgment, or task-success verification. Keeping method and protocol separate allows two studies that use the same evaluator family to be distinguished when they operationalize evaluation differently.
 
-Three concepts are kept separate throughout the review. The \emph{evaluation object} denotes what is primarily being assessed, such as an LLM-based system, an evaluator/judge, or an external-domain object. The \emph{quality dimension} denotes the property or lifecycle stage whose quality is under investigation. The \emph{evaluation method} denotes the mechanism used to produce a score, judgment, ranking, or verification outcome.
+\subsection{Evaluator Reliability as Meta-Evaluation}
 
-This distinction is particularly important for domain-specific studies. The presence of an LLM in a healthcare, energy, IoT, or software-engineering pipeline does not automatically imply that LLM quality is being evaluated. Conversely, a domain-specific study may be directly relevant when it independently assesses the quality contribution of the LLM-based subsystem.
+Evaluator quality is not treated as a normal lifecycle stage. Instead, it is modeled as a meta-evaluation problem that concerns the trustworthiness of the measurement process itself. This distinction is necessary because an LLM judge may be used to evaluate an output without the judge being evaluated in any way. Judge reliability is coded only when the study investigates properties such as consistency, agreement, bias, calibration, robustness, or sensitivity to prompts or presentation effects.
+
+This also applies to multi-judge schemes. The use of several evaluators does not by itself establish reliability. A multi-judge approach becomes evidence about evaluator quality only when the study analyzes agreement, dependence, error diversity, calibration, or another property that supports a claim about the resulting measurement.
+
+\subsection{What Counts as End-to-End Evaluation}
+
+The term end-to-end is used inconsistently in the literature and is therefore not accepted as a category based on terminology alone. This survey distinguishes four levels of integration.
+
+\begin{description}
+\item[None:] Quality is assessed at an isolated dimension or component, without an explicit relation to other lifecycle stages.
+\item[Cross-stage:] At least two stages or dimensions are explicitly related, compared, or analyzed, such as prompt quality to output quality or retrieval quality to answer quality.
+\item[Black-box end-to-end:] A multi-stage workflow is evaluated from input to final outcome, but the contribution of internal stages is not decomposed.
+\item[Lifecycle-integrated:] At least three lifecycle dimensions or stages are jointly evaluated, including either operational/system quality or evaluator reliability, with explicit relationships, attribution, or joint aggregation across stages.
+\end{description}
+
+This distinction is central to the survey because it separates overall task evaluation from diagnostic evaluation. Both are useful, but they answer different questions.
+
+\subsection{Scope of the Survey}
+
+The primary academic synthesis is restricted to peer-reviewed studies whose contribution is directly relevant to quality assessment of LLMs or LLM-based systems. A study is considered \textbf{Core} when it directly evaluates one or more quality dimensions of an LLM-based system or explicitly investigates relations among them. A study is considered \textbf{Adjacent} when the LLM is mainly a tool or component used to evaluate an external-domain object, or when the evaluation method is transferable but LLM-system quality is not the principal target. Studies without substantive relevance to the evaluation problem are excluded.
+
+The presence of an external application domain does not automatically make a study Adjacent. A healthcare, IoT, energy, or software-engineering paper may be Core when it explicitly measures the quality of the LLM-based subsystem. Conversely, a study in which an LLM merely predicts, diagnoses, or classifies an external object remains Adjacent unless the contribution of the LLM itself is separately evaluated.
+
+Cross-cutting properties such as robustness, safety, security, fairness, multimodality, and efficiency are not treated as independent lifecycle stages. They are analyzed as properties that may apply to one or more dimensions. This prevents the taxonomy from mixing system stages with orthogonal quality concerns.
