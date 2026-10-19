@@ -9,11 +9,11 @@ A Survey of Quality Dimensions, Evaluation Methods, and Integration}
 \author{Dener Silva}
 
 \begin{abstract}
-Large Language Models (LLMs) have evolved from standalone text generators into components of increasingly complex software systems that combine prompt engineering, retrieval-augmented generation, tools, memory, multi-agent coordination, and production infrastructure. This evolution has produced an equally fragmented evaluation landscape: different studies assess prompt robustness, retrieval quality, factuality, task success, judge agreement, latency, safety, or cost, often in isolation and with limited visibility into how quality propagates across the complete system lifecycle.
+Large Language Models (LLMs) increasingly operate as components of software systems that combine prompts, retrieval, tools, memory, multi-turn interaction, agents, and production infrastructure. Their evaluation, however, remains fragmented across benchmarks and metrics that often isolate a single artifact, stage, or operational property. As a result, a high score at the final response does not necessarily reveal whether quality originated from the model, the specification, the retrieved context, the execution trajectory, or the evaluator itself.
 
-This survey organizes LLM quality assessment around two complementary questions: \emph{what} aspect of an LLM-based system is evaluated and \emph{how} that quality is measured. We distinguish quality dimensions associated with input and specification, context and retrieval, generated output, conversational interaction, agent processes and trajectories, and operational/system behavior. Separately, we organize evaluation mechanisms including deterministic and reference-based metrics, semantic evaluators, learned evaluators, human evaluation, LLM-as-a-Judge, multi-judge approaches, task- and environment-based evaluation, adversarial testing, perturbation-based methods, trace-aware evaluation, and statistical reliability analysis.
+This survey develops a lifecycle-oriented view of quality assessment for LLM-based systems. We separate three concepts that are frequently conflated in the literature: the object being evaluated, the quality dimension under investigation, and the method used to produce an evaluation judgment. The resulting taxonomy covers input and specification quality, context and retrieval quality, output quality, conversation and interaction quality, agent/process/trajectory quality, and operational/system quality. Evaluator reliability is treated as a meta-evaluation layer rather than as an ordinary lifecycle stage. In parallel, we organize evaluation methods ranging from deterministic and reference-based metrics to semantic and learned evaluators, human evaluation, LLM-as-a-Judge, multi-judge approaches, task- and environment-based verification, adversarial testing, perturbation-based evaluation, trace-aware methods, and statistical reliability analysis.
 
-Beyond cataloguing individual metrics, we investigate the degree to which existing approaches integrate multiple stages of the LLM lifecycle. We distinguish isolated evaluation, cross-stage assessment, black-box end-to-end evaluation, and lifecycle-integrated evaluation. Evaluator reliability is treated as a meta-evaluation problem rather than as a normal lifecycle stage, allowing the use of an LLM judge to be distinguished from evidence that the judge itself is reliable. The resulting synthesis is intended to clarify how current evaluation practices relate to one another and to identify gaps toward more coherent, traceable, and end-to-end quality assessment of LLM-based systems.
+Beyond cataloguing evaluation techniques, the survey examines how the literature combines them across system stages. We distinguish isolated evaluation, cross-stage assessment, black-box end-to-end evaluation, and lifecycle-integrated evaluation. We further separate the use of an LLM judge from evidence that the judge itself is reliable, and we examine how operational factors such as latency, cost, availability, resource consumption, observability, privacy, and safety enter quality assessment. The objective is to expose where current evaluation practice is mature, where it remains fragmented, and which relationships must be measured to support more reliable end-to-end quality assessment of LLM-based systems.
 \end{abstract}
 
 \keywords{Large Language Models, LLM Evaluation, Quality Assessment,
@@ -29,8 +29,11 @@ End-to-End Evaluation, Reliability}
 \input{sections/03_research_questions}
 \input{sections/04_methodology}
 \input{sections/05_taxonomy}
-
-% TODO: evidence-driven synthesis sections after the corpus audit.
+\input{sections/06_quality_dimensions}
+\input{sections/07_evaluation_methods}
+\input{sections/08_integration}
+\input{sections/09_gaps}
+\input{sections/10_conclusion}
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{references}
