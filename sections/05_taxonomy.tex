@@ -1,0 +1,91 @@
+\section{A Taxonomy of LLM-System Quality Assessment}
+\label{sec:taxonomy}
+
+Figure~\ref{fig:taxonomy} summarizes the conceptual organization adopted in this survey. At its center lies the LLM-based system lifecycle, progressing from specification and contextual information through generation, interaction, and agentic execution to operational behavior. Evaluation methods form a separate layer that can be applied to any lifecycle stage, while evaluator reliability constitutes a meta-evaluation layer surrounding the measurement process itself.
+
+% TODO: replace this placeholder with the final circular taxonomy figure.
+\begin{figure*}[t]
+    \centering
+    \fbox{
+        \parbox{0.92\textwidth}{
+        \centering
+        \textbf{Placeholder for the circular quality-assessment taxonomy}\\[4pt]
+        Inner lifecycle: Input/Specification $\rightarrow$ Context/Retrieval $\rightarrow$
+        Output $\rightarrow$ Conversation/Interaction $\rightarrow$ Agent/Process $\rightarrow$
+        Operational/System\\[4pt]
+        Evaluation-method layer: deterministic, reference-based, semantic, learned,
+        human, LLM-as-a-Judge, multi-judge, task/environment, adversarial,
+        perturbation-based, trace-aware\\[4pt]
+        Outer meta-evaluation layer: evaluator reliability, agreement, consistency,
+        bias, calibration, robustness
+        }
+    }
+    \caption{Conceptual organization of LLM-system quality assessment. Quality dimensions describe what is evaluated, evaluation methods describe how it is measured, and evaluator reliability forms a meta-evaluation layer.}
+    \label{fig:taxonomy}
+\end{figure*}
+
+\subsection{Input and Specification Quality}
+
+Input and specification quality concerns whether the information supplied to an LLM adequately communicates the intended task and whether model behavior remains stable under semantically equivalent or otherwise acceptable variations of that specification. Relevant topics include prompt sensitivity, instruction quality, ambiguity, robustness to formatting and paraphrasing, and prompt optimization.
+
+An important distinction is made between evaluating prompt quality and merely using a prompt as part of an experiment. Input quality is coded only when properties of the prompt or specification are themselves varied, measured, optimized, or explicitly related to downstream behavior.
+
+\subsection{Context and Retrieval Quality}
+
+This dimension covers external context supplied to a model, including retrieval-augmented generation, memory retrieval, ranking, context selection, grounding, and related mechanisms. Typical properties include relevance, recall, precision, context coverage, grounding, and retrieval efficiency.
+
+RAG evaluation illustrates the need for cross-stage analysis particularly clearly. A system may obtain a high-quality final answer despite imperfect retrieval, or may produce an incorrect answer despite having retrieved sufficient evidence. Measuring only the final answer therefore does not identify the quality contribution of the retrieval stage.
+
+\subsection{Output Quality}
+
+Output quality encompasses properties such as correctness, factuality, faithfulness, relevance, completeness, coherence, helpfulness, safety, code correctness, and task-specific performance.
+
+Output quality can be assessed using references, semantic similarity, human judgments, learned evaluators, LLM judges, executable tests, or domain-specific criteria. The diversity of evaluation mechanisms makes output quality a useful example of why the measurement method must be distinguished from the construct being measured.
+
+\subsection{Conversation and Interaction Quality}
+
+Single-response evaluation does not capture several properties of interactive LLM systems. Conversation quality includes consistency across turns, state maintenance, adaptation to feedback, dialogue-policy adherence, user-goal completion, and behavior over prolonged interactions.
+
+Multi-turn systems also introduce temporal dependencies: an apparently reasonable local response can create downstream failures several turns later. Consequently, interaction quality frequently requires evaluation beyond independent response-level scoring.
+
+\subsection{Agent, Process, and Trajectory Quality}
+
+Agentic LLM systems introduce intermediate decisions such as planning, routing, tool selection, tool invocation, memory access, reflection, and inter-agent communication. Evaluating only the final task outcome may conceal inefficient, unsafe, or incorrect trajectories that happen to produce the correct result.
+
+Process-level evaluation therefore includes stepwise assessment, trace analysis, tool-call validation, trajectory comparison, goal-progress measurement, and environment-based verification.
+
+\subsection{Operational and System Quality}
+
+The practical quality of an LLM-based system depends not only on semantic correctness but also on its ability to operate under real deployment constraints. Relevant characteristics include latency, throughput, monetary cost, token consumption, memory usage, energy consumption, availability, privacy, safety, and observability.
+
+Operational quality is particularly important when evaluation methods themselves introduce substantial overhead. For example, repeated LLM-based judging may improve the robustness of an evaluation while simultaneously increasing latency and monetary cost. Accordingly, the cost and quality of the evaluation process may need to be considered together.
+
+\subsection{Evaluator Reliability as a Meta-Evaluation Layer}
+
+Evaluation results are meaningful only to the extent that the evaluation mechanism provides a reliable measurement of the intended construct. This issue applies to human raters, learned metrics, and LLM-based judges alike.
+
+For LLM judges, relevant properties include inter- and intra-judge consistency, agreement with humans, calibration, prompt sensitivity, position and verbosity biases, susceptibility to adversarial or persuasive inputs, and dependence between judges in ensemble settings.
+
+This survey therefore treats evaluator reliability as a meta-evaluation layer rather than a normal lifecycle stage. An LLM judge may be used to evaluate output quality without the reliability of that judge being evaluated at all. Conversely, a study whose primary objective is to measure the behavior of the judge belongs explicitly to evaluator-quality research.
+
+\subsection{Quality Dimensions and Typical Evaluation Questions}
+
+Table~\ref{tab:quality-dimensions} provides a compact mapping between the proposed dimensions and the types of questions they address.
+
+\begin{table*}[t]
+\caption{Quality dimensions, representative questions, and common evaluation approaches.}
+\label{tab:quality-dimensions}
+\begin{tabular}{p{0.18\textwidth} p{0.27\textwidth} p{0.25\textwidth} p{0.22\textwidth}}
+\toprule
+\textbf{Dimension} & \textbf{Typical question} & \textbf{Representative properties} & \textbf{Common approaches} \\
+\midrule
+Input / Specification & Is the task adequately and robustly specified? & sensitivity, ambiguity, robustness, instruction quality & perturbation, task performance, human review \\
+Context / Retrieval & Was useful and relevant evidence supplied? & relevance, recall, grounding, coverage & IR metrics, semantic metrics, human or LLM evaluation \\
+Output / Response & Is the produced result correct and useful? & correctness, factuality, faithfulness, relevance, safety & human, semantic, judge, execution-based \\
+Conversation / Interaction & Does quality persist across turns? & consistency, state maintenance, goal completion & human review, simulation, task success \\
+Agent / Process & Was the task performed through an acceptable trajectory? & planning, tool use, intermediate decisions, trajectory quality & trace analysis, environment checks, judge-based evaluation \\
+Operational / System & Can the system operate acceptably in practice? & latency, throughput, cost, availability, resource use & telemetry, profiling, monitoring \\
+Meta-evaluation & Can the measurement itself be trusted? & agreement, consistency, calibration, bias, robustness & human comparison, reliability statistics, perturbation \\
+\bottomrule
+\end{tabular}
+\end{table*}
