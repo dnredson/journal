@@ -222,12 +222,58 @@ For our final synthesis, we will therefore code conversation/interaction quality
 \subsection{Agent, Process, and Trajectory Quality}
 \label{sec:agent-quality}
 
-% TODO:
-% - Planning, decomposition, routing, tool calls, trajectory quality.
-% - Stepwise vs final-response evaluation.
-% - Trace-aware evaluation.
-% - Multi-agent coordination and protocol-level behavior.
-% - Task success vs process correctness.
+\paragraph{Evaluating a process, not only its result.}
+Agentic LLM systems execute sequences of decisions that may include goal decomposition, planning, memory access, tool selection, invocation, environment observation, recovery, and coordination with other agents. Their evaluation therefore raises a question not answered by output accuracy alone: \emph{did the system reach an acceptable result through acceptable actions?} A successful final artifact can conceal redundant tool calls, unsafe intermediate operations, unintended side effects, or dependence on accidental environmental conditions. Conversely, a partially successful trajectory can reveal useful progress even when the final objective is not achieved. In our taxonomy, the mere presence of a chain of thought, tool interface, or multiple agents is insufficient to establish process-quality evaluation. The study must explicitly measure, verify, compare, or diagnose properties of the agent's actions, decisions, or trajectory.
+
+A useful distinction is between \emph{task outcome verification} (did the goal state occur?), \emph{trajectory or step-level assessment} (which actions were valid, effective, or problematic?), and \emph{evaluator meta-assessment} (is the mechanism judging the trajectory trustworthy?). These are complementary forms of evidence but should not be conflated. The distinction also matters for RQ3: a multi-step system tested solely by the final outcome may qualify as \emph{black-box end-to-end evaluation}, whereas intermediate progress and cross-stage links provide stronger, but still bounded, diagnostic evidence.
+
+\paragraph{Interactive environments and final-goal benchmarks.}
+Liu et al.\ introduce AgentBench, which evaluates LLMs as agents across eight interactive environments involving reasoning and decision making \cite{liu2024agentbench}. The benchmark exposes persistent difficulties in long-horizon decision making, instruction following, and task completion, and its environmental breadth is valuable for comparing agents beyond static question answering. However, combining scores from different environments does not automatically attribute failures to particular plans or tool calls. Even when authors analyze observed failure patterns, the quality construct underlying each environment's reward must be distinguished from the intermediate behavior that produced it.
+
+WebArena offers a realistic, reproducible environment with functional websites and tasks evaluated by the correctness of the resulting website state \cite{zhou2024webarena}. Its published baseline includes an end-to-end success rate of 14.41\% for the best GPT-4-based agent, compared with 78.24\% for human participants, under the tested conditions. WorkArena similarly assesses browser agents on enterprise knowledge-work tasks using a ServiceNow environment, with 33 task types in its ICML version of record \cite{drouin2024workarena}. Both provide substantial evidence about functional task success in an environment, but such outcomes do not independently certify the safety, efficiency, reversibility, or necessity of every intermediate action. The phrase \emph{end-to-end} here describes task execution from request to final state; it should not be mistaken for validated lifecycle-wide quality attribution.
+
+GAIA takes a different benchmark route by posing 466 general-assistant questions requiring combinations of reasoning, browsing, multimodal interpretation, and tool use \cite{mialon2024gaia}. Its published comparison emphasizes the performance gap between human respondents and a GPT-4 system with plugins. This is a useful \emph{black-box capability and outcome benchmark} for tasks that may require several operations. It is not, solely by virtue of requiring tools, a measurement of tool-selection correctness, trajectory efficiency, or quality propagation across the underlying stages.
+
+\paragraph{Progress-aware and trace-sensitive evaluation.}
+Ma et al.\ directly address the limits of final success by introducing AgentBoard and its \emph{progress rate} metric \cite{ma2024agentboard}. The framework is designed to expose incremental task completion and facilitate more fine-grained inspection of agents in partially observable, multi-round settings. This is important evidence that the literature already contains stage- and progress-aware agent evaluation; a claim that prior benchmarks ignore the process altogether would be incorrect. At the same time, progress toward an environment-defined goal is not a universal measurement of action safety, policy compliance, or operational cost.
+
+Yang et al.\ use SWE-agent to study how the design of an agent-computer interface changes agents' ability to navigate repositories, edit files, and execute tests \cite{yang2024sweagent}. Their NeurIPS experiments assess downstream software-task performance and analyze interface-mediated behavior. The study connects a change in the interaction interface with observed outcomes, offering evidence of a process-related intervention. Nevertheless, a higher repository-task success rate should not be interpreted as proving that each generated patch, tool invocation, or intermediate decision was independently validated. This distinction is especially relevant when interpreting agent frameworks that expose detailed traces primarily for debugging rather than using them as validated evaluation targets.
+
+\paragraph{Agentic evaluation as a measurement method.}
+Agent-as-a-Judge, proposed by Zhuge et al., evaluates multi-step solutions using an evaluator with agentic capabilities \cite{zhuge2025agentjudge}. The study introduces DevAI, with 55 code-generation tasks and 365 manually annotated hierarchical requirements, and compares its agentic evaluator with LLM-as-a-Judge and human assessment. Its central contribution is not just another benchmark for the tested coding agents: the work investigates a \emph{method for judging intermediate and final behavior} and provides evidence against a human evaluation baseline. It thus spans process quality as a target and evaluator reliability as a meta-evaluation concern.
+
+Lù et al.\ further investigate measurement reliability with AgentRewardBench, published at COLM 2025 \cite{lu2025agentrewardbench}. The dataset contains 1,302 web-agent trajectories from five benchmarks, annotated by experts for task success, side effects, and repetitiveness; the authors compare 12 LLM-based evaluators and find no universally best judge across the examined settings. They also report that rule-based success checks can miss successful executions. These findings matter for system-quality assessment because the \emph{choice of judge can change the observed success signal}. It would be inappropriate to treat a rule-based outcome, a human judgment, and a trajectory-aware LLM judgment as equivalent evidence without examining their agreement, error patterns, and construct coverage.
+
+The validity-centered systematic survey by Nageshwaran et al.\ provides additional secondary context \cite{nageshwaran2026agent}. Its capability--scoring--environment meta-taxonomy and discussion of non-determinism, contamination, and execution cost show that the relationship between benchmark design and score meaning is already a major concern in agent evaluation. For our synthesis, this review is treated as secondary evidence rather than as an additional experimental validation of its constituent benchmarks.
+
+\paragraph{Comparing the evidentiary claims.}
+Table~\ref{tab:agent-process-studies} distinguishes representative peer-reviewed contributions according to the evaluation target and the strength of evidence about intermediate behavior. The table is illustrative; it is not the final distribution of integration levels in the screened corpus.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Representative studies of agent, process, and trajectory quality. The evidence column describes what is explicitly evaluated, not the mere presence of an agent architecture.}
+\label{tab:agent-process-studies}
+\begin{tabular}{p{0.17\textwidth} p{0.20\textwidth} p{0.28\textwidth} p{0.25\textwidth}}
+\toprule
+\textbf{Study} & \textbf{Primary target} & \textbf{Reported evaluation evidence} & \textbf{Boundary of inference} \\
+\midrule
+AgentBench \cite{liu2024agentbench} & Interactive agent capabilities & Success and failure across eight environments & Multi-environment scores do not ensure step attribution \\
+WebArena \cite{zhou2024webarena} & Web task completion & Functional correctness of website outcome & End state need not reveal trajectory validity \\
+WorkArena \cite{drouin2024workarena} & Enterprise browser tasks & Task outcomes in ServiceNow / BrowserGym & Environment specificity limits generalization \\
+GAIA \cite{mialon2024gaia} & General-assistant outcomes & Answers requiring browsing, reasoning, tools & Tool dependence alone is not tool-quality assessment \\
+AgentBoard \cite{ma2024agentboard} & Incremental agent progress & Progress rate; trajectory-oriented visualization & Progress and compliance/safety are distinct \\
+SWE-agent \cite{yang2024sweagent} & Agent-computer interface & Interface intervention and software-task outcomes & Better task success does not certify every step \\
+Agent-as-a-Judge \cite{zhuge2025agentjudge} & Trajectory evaluation method & Hierarchical requirements and human baseline & Judge validation is method-specific \\
+AgentRewardBench \cite{lu2025agentrewardbench} & Agent evaluator reliability & Expert labels for 1,302 trajectories; 12 judges & Evaluators disagree; avoid interchangeable scores \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Implications for integration and eligibility.}
+The surveyed examples establish a progression from black-box goal verification to progress metrics, action-sensitive evaluation, and direct reliability studies of the evaluator. However, these are \emph{different measurement designs}, not successive ranks of paper quality. In particular, evaluator disagreement can alter apparent agent success without the agent's behavior changing, while action traces may reveal undesirable side effects hidden by a correct final state. The presence of trace access is not sufficient evidence of trace-based measurement, and the addition of operational metrics is not sufficient evidence that such metrics have been related to process or outcome quality.
+
+We consequently code agent/process quality only when execution behavior is a substantive evaluation target, record final task success as a separate outcome, and distinguish process-aware evaluator methods from empirical studies of evaluator reliability. A paper on orchestration or agent architecture without actual agent-quality assessment may provide background but does not automatically satisfy the primary review's \emph{Core} relevance criterion. The distribution of isolated, cross-stage, black-box end-to-end, and lifecycle-integrated studies must be established by the audited corpus; it cannot be inferred from the terminology used by the papers.
 
 \subsection{Operational and System Quality}
 \label{sec:operational-quality}
