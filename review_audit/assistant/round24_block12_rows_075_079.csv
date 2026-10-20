@@ -1,0 +1,6 @@
+source_block,source_row,filename,title,sha1,provisional_label,evidence_level
+"Bloco 12","75","mps-09-00033.pdf","A Review of Multi-Agent AI Systems for Biological and Clinical Data Analysis","adc414b1911ab980a2cf97e777b508cbd239c68a","ADJACENT_CANDIDATE","TITLE_ONLY"
+"Bloco 12","76","s00607-026-01676-3.pdf","© The Author(s), under exclusive licence to Springer-Verlag GmbH Austria, part of Springer Nature 2026","341c815c2bb342a8ddcf12a2e08c9830e75df93e","EXCLUDE_TOPIC_PROVISIONAL","TITLE_ONLY"
+"Bloco 12","77","s11426-025-3262-6.pdf","Usability and extensibility: imperatives for next-generation LLM agents in chemistry","1be788951bcf3b48d6aed62a76884e199a9db300","UNCERTAIN","TITLE_ONLY"
+"Bloco 12","78","short9.pdf","Converging Hypermedia, Protocols, and Knowledge Architectures: A New Paradigm for Grounded and Interoperable LLM-Agent Systems","115b93272e0311e5e7f2ca2108b0cdf7ea4fa6cd","UNCERTAIN","TITLE_ONLY"
+"Bloco 12","79","ssrn-5957238.pdf","5University Canada West, Vancouver, BC, Canada (xiaoming.li@ucanwest.ca)","f966f8c2ba9c3d541a58346e0f4df9f89b08a425","EXCLUDE_TOPIC_PROVISIONAL","TITLE_ONLY"
