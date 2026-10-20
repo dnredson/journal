@@ -34,6 +34,16 @@ Scope screening assigns each record to one of three relevance classes. \textbf{C
 
 This distinction is intentionally independent of application domain. A study in medicine, energy, IoT, education, or software engineering can be Core when it directly evaluates the LLM-based subsystem. Conversely, the presence of an LLM in an application does not make the study Core when the principal outcome concerns an external object and the quality contribution of the LLM is not separately assessed.
 
+\subsection{Study Selection and Flow Accounting}
+
+The unit of retrieval is a \emph{database record}, while the unit of analysis is a \emph{unique study}. Different records or PDF versions may refer to the same study. Study-level deduplication therefore considers normalized titles, authors, DOI, venue, publication year, and version-of-record links in addition to file hashes. A difference between the number of retrieved records and unique PDF hashes must not automatically be reported as the number of duplicate studies.
+
+Eligibility assessment proceeds in auditable stages: (1) record identification across the historical blocks and temporal update; (2) reconciliation and deduplication; (3) publication-status verification; (4) title/abstract screening for relevance to LLM-system quality assessment; (5) full-text assessment of uncertain cases and claims requiring deeper evidence; and (6) final assignment to the primary \emph{Core} synthesis, secondary/adjacent evidence tracks, or documented exclusion. The publication-status gate and the scope decision are recorded independently, allowing a topically relevant but preprint-only study to be distinguished from a peer-reviewed study that is substantively out of scope.
+
+For the primary evidence set, studies must have a verifiable peer-reviewed journal, conference, or peer-reviewed workshop publication and a substantive contribution to the evaluation of an LLM or LLM-based system. Publication formats without confirmed peer review are excluded from the primary academic denominator but may be separately documented as grey or practice evidence. Duplicate versions, clearly out-of-scope contributions, and records for which eligible publication or substantive evaluation evidence cannot be established receive explicit reason codes. Surveys and systematic reviews are coded as a separate secondary-study type; they are not counted as independent empirical replications of the works they cite.
+
+The final article will report the counts for each selection stage using a PRISMA-style flow diagram. Each excluded full-text report will have a primary reason, and additional reasons may be retained in the audit trail. At present, the historical retrieval totals are available but the verified numbers remaining after study-level deduplication, peer-review gating, and human-adjudicated eligibility are not frozen; no final included-study count is therefore reported here.
+
 \subsection{Coding Scheme}
 
 For each eligible study, the extraction schema records: (i) study type; (ii) primary evaluation object; (iii) quality dimensions; (iv) evaluation methods; (v) evaluation protocols; (vi) experimental regime; (vii) integration level; and (viii) supporting evidence.
