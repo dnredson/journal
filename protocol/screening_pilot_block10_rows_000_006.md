@@ -1,0 +1,17 @@
+# Screening pilot — original Block 10, rows 0–6
+
+Date: 2026-10-20. **Provisional judgments** based on indexed spreadsheet metadata/evidence and (where noted) publisher lookup. This is NOT human-adjudicated final eligibility. The 50 new screening batches are yet to be built from the full 2,662-row master export.
+
+| Original row | Source | Study | Screening status | Reason / action |
+|---|---|---|---|---|
+| 0 | \`#U041c...pdf\` | Ukrainian 2025 master's thesis on observability/AIOps | Exclude from peer-reviewed primary corpus (provisional) | Thesis explicitly identified by title/front matter. No independent peer-reviewed version checked; log possible derivative publication separately. Also no demonstrated direct LLM-quality evaluation in excerpt. |
+| 1 | \`00107-FSS.GuptaK (1).pdf\` | Continuous Monitoring of Large-Scale Generative AI via Deterministic Knowledge Graph Structures | Core; published proceedings version identified; retain for deeper evidence extraction | Kishor Datta Gupta et al. (2025), AAAI Fall Symposium Series, 7(1), 169–176. DOI 10.1609/aaaiss.v7i1.36883. Publisher: https://ojs.aaai.org/index.php/AAAI-SS/article/view/36883. Direct evaluation of LLM-generated knowledge graphs, structural and hallucination checks. Code as output quality and possibly monitoring; do NOT infer all agent/conversation/system targets solely from background wording. Verify conference peer-review policy if required by strict venue audit. |
+| 2 | \`00107-FSS.GuptaK.pdf\` | Same as original row 1 | Exact file duplicate; merge version provenance | Same SHA-1 \`4f94513262778fd57f99c31a990b9298503d4cd7\`. This is not a second study. |
+| 3 | \`1-s2.0-S0038071725002937-main.pdf\` | Rapid allocation of freshly added organic nitrogen to particulate organic matter... | Exclude: out of scope | Published in Soil Biology and Biochemistry, DOI 10.1016/j.soilbio.2025.109999; soil ecology and isotope labeling, not LLM evaluation. Publisher https://www.sciencedirect.com/science/article/pii/S0038071725002937 |
+| 4 | \`1-s2.0-S0043135424016671-main.pdf\` | Plastic transport in rivers: Bridging the gap between surface and water column | Exclude: out of scope | River plastics observations, not LLM-system quality; supported by indexed abstract and evidence. |
+| 5 | \`1-s2.0-S0048969725010599-main.pdf\` | Insights into the mobility of rare earth complexes in groundwater-rock interactions... | Exclude: out of scope | Computational geochemistry, not LLM evaluation, supported by indexed abstract. |
+| 6 | \`1-s2.0-S0149763425004221-main.pdf\` | Are conventional antidepressants enough? The gut microbiome... | Exclude: out of scope | Medical review unrelated to LLM evaluation; supported by indexed abstract. |
+
+For rows 3–6, a primary reason of OUT_OF_SCOPE is sufficient for screening; there is no need to independently establish peer-review if exclusion is already justified. Exact titles, abstracts and evidence were read from the Project's indexed consolidated spreadsheet, not checked against the PDFs themselves. For row 1 the publisher page supplies publication identity and research abstract, not a substitute for checking study-level empirical details.
+
+Next: export the full source workbook, create stable record IDs, partition 2,662 source rows into 50 deterministic screening batches (38 of 53 and 12 of 54), then screen independent of the older relevance labels. Do not label these preliminary judgments as human cross-validation.
