@@ -1,26 +1,28 @@
 \section{From Component Metrics to End-to-End Assessment}
 \label{sec:integration}
 
-This section addresses the central integration question of the survey: whether the literature merely accumulates metrics for individual components or provides evidence that connects quality across the lifecycle of an LLM-based system.
+A high final-answer score does not identify whether quality originated in the prompt, retrieval, model, tool execution, or infrastructure. Likewise, reporting several metrics is not equivalent to establishing relationships among their targets. This section distinguishes four levels of integration as an analytical framework rather than claiming their prevalence in the final corpus.
 
 \subsection{Isolated Component Evaluation}
-% TODO: quantify dominant single-dimension patterns and what they can/cannot explain.
+
+An isolated evaluation measures a quality construct without explicitly analyzing its relationship to another stage. BERTScore captures semantic similarity \cite{zhang2020bertscore}, whereas FActScore estimates support for atomic factual claims \cite{min2023factscore}. These signals are useful within their intended scope but cannot independently attribute final application success or failure to upstream components. Isolated evaluation is not a weakness when the research question is deliberately component-specific.
 
 \subsection{Cross-Stage Evaluation}
-% TODO: prompt -> output; retrieval -> output; process/trajectory -> outcome;
-% operational constraints -> quality; input/specification -> evaluator behavior.
+
+Cross-stage assessment explicitly investigates a relationship between at least two stages. Prompt variations measured against downstream task performance provide input-to-output evidence \cite{sclar2024formatting,chatterjee2024posix}. Retrieval and generation metrics can support analogous analyses in RAG \cite{es2024ragas,ru2024ragchecker}, and progress signals can connect an agent's actions with eventual outcomes \cite{ma2024agentboard}. Merely displaying two scores does not establish a relationship, however. We separately code co-reporting, correlation, controlled intervention, and substantiated causal attribution.
 
 \subsection{Black-Box End-to-End Evaluation}
-% TODO: multi-stage systems scored only at final outcome.
-% Discuss usefulness for task success and weakness for attribution/diagnosis.
+
+Black-box end-to-end assessment measures completion of a multistage task without decomposing intermediate quality. SWE-bench checks repository-level issue resolution \cite{jimenez2024swebench}; WebArena and $\tau$-bench test interactive goal completion \cite{zhou2024webarena,yao2025taubench}. These protocols provide meaningful evidence of operational task success, but success may conceal inefficient or fragile trajectories. Failure likewise does not identify which internal stage was responsible. This is a valid and important category distinct from stage-attributed assessment.
 
 \subsection{Lifecycle-Integrated Evaluation}
-% TODO: studies combining >=3 dimensions including operational or evaluator quality.
-% Separate empirical use from proposed/discussed frameworks.
+
+For this mapping we operationalize lifecycle-integrated assessment as joint evaluation of at least three stages or quality dimensions, including evaluator reliability or operational quality, with an explicit analyzed relationship or joint model. This is a survey coding definition, not a purported universal standard. HELM demonstrates breadth across standardized metrics and scenarios \cite{liang2023helm}, but multidimensionality does not automatically prove quality attribution among application stages. We separately classify whether an integration is empirically evaluated, conceptually proposed, or discussed by a secondary study.
 
 \subsection{Integration Without Attribution}
-% TODO: multidimensional scorecards, composite indices, dashboards, and cases where
-% several metrics are reported but relations among stages are not analyzed.
 
-\subsection{What End-to-End Should Mean for LLM Quality Assessment}
-% TODO: synthesis; propose evidence-backed definition only after final corpus analysis.
+A quality dashboard or composite index may aggregate accuracy, faithfulness, latency, cost, and robustness without explaining dependencies. Aggregation requires decisions about scaling, weighting, missing values, and compensability. An average score can conceal severe failure in one critical dimension, while correlated measures may be counted twice. A composite score thus requires application-specific justification and sensitivity analysis before interpretation as overall system quality.
+
+\subsection{An Evidence-Oriented Definition of End-to-End Quality}
+
+An end-to-end evaluation should measure the application outcome and explicitly state how relevant upstream stages, process observations, evaluator uncertainty, and operational constraints support the final claim. This does not require every conceivable metric, but it does require a defensible relationship between the constructs measured and the system behavior being evaluated. The final screened mapping will test the distribution of integration levels, supported relationships, and remaining gaps. No frequencies are reported before human-adjudicated classification.
