@@ -30,3 +30,23 @@ RQ5 examines whether semantic or task-level quality is considered together with 
 RQ6 synthesizes the preceding results to identify dimensions that are well studied in isolation but weakly connected, evaluation methods whose reliability is insufficiently characterized, and lifecycle relationships for which empirical evidence remains scarce. This final question provides the basis for the research agenda proposed in the survey.
 
 \end{description}
+
+
+The six questions are intentionally cumulative. RQ1 and RQ2 establish the descriptive map of the field; RQ3 tests whether the resulting dimensions are merely co-reported or explicitly connected; RQ4 evaluates the trustworthiness of the measurement layer; RQ5 brings deployment constraints into the same analytical frame; and RQ6 synthesizes the preceding evidence into a gap analysis. Table~\ref{tab:rq-operationalization} makes this operationalization explicit.
+
+\begin{table*}[t]
+\caption{Operationalization of the research questions.}
+\label{tab:rq-operationalization}
+\begin{tabular}{p{0.07\textwidth} p{0.29\textwidth} p{0.31\textwidth} p{0.25\textwidth}}
+\toprule
+\textbf{RQ} & \textbf{What we want to know} & \textbf{Evidence extracted from each study} & \textbf{Planned synthesis} \\
+\midrule
+RQ1 & Where in the LLM-system lifecycle is quality actually assessed? & Evaluation object; lifecycle dimensions; subdimensions; cross-cutting properties & Frequency and co-occurrence of dimensions; under- and over-represented stages \\
+RQ2 & How is each quality claim produced and operationalized? & Method family; protocol; reference/reference-free setting; human/automated evaluator; task/environment verification & Dimension--method matrix; method concentration; protocol patterns and blind spots \\
+RQ3 & Does the literature connect quality across stages or only report separate metrics? & Integration links; component/end-to-end regime; isolated vs cross-stage vs black-box vs lifecycle-integrated coding & Integration-level distribution; recurrent cross-stage relations; attribution gaps \\
+RQ4 & Can the measurement mechanism itself be trusted? & Agreement; calibration; bias; consistency; robustness; human alignment; multi-judge dependence & Meta-evaluation evidence; validated vs unvalidated evaluator use \\
+RQ5 & Is practical deployment quality part of the quality claim? & Latency; throughput; cost; resources; availability; observability; privacy; safety; development/production regime & Semantic/task quality vs operational-quality relationships and trade-offs \\
+RQ6 & What remains missing for end-to-end quality assessment? & Combined evidence from RQ1--RQ5, including uncertain and weakly connected areas & Evidence-backed gap map and research agenda; eventual positioning of integrated quality models \\
+\bottomrule
+\end{tabular}
+\end{table*}
