@@ -23,7 +23,7 @@ The consolidated file \`PQI_controle_classificacao_blocos_10_12.xlsx\` was locat
 | 12 | 84 | 83 | 34 | 18 | 32 | 14 | 0 | 14 |
 | **Reported total** | **2662** | **2561** | **2033** | **407** | **222** | **1044** | **345** | **597** |
 
-Note: summed per-block unique hashes are not global unique-file counts. Compare global SHA-1 and metadata deduplication separately. The above per-block figures reflect the indexed spreadsheet summary and should be compared with source row data before publication.
+Audit cross-check: the twelve per-block unique-file counts sum to **2,571**, whereas the consolidated global unique count is **2,561** (difference: **10**). This is compatible with files repeated across different blocks, but requires hash-level confirmation. Summed per-block unique hashes are not global unique-file counts. Compare global SHA-1 and metadata deduplication separately. The above per-block figures reflect the indexed spreadsheet summary and should be compared with source row data before publication.
 
 ## Validation checklist
 - [ ] Recover exact source database, query string and search date for each original block.
