@@ -110,12 +110,60 @@ These distinctions provide concrete evidence categories for RQ1--RQ5. They also 
 \subsection{Output and Response Quality}
 \label{sec:output-quality}
 
-% TODO:
-% - Correctness, factuality, faithfulness, relevance, completeness, helpfulness.
-% - Code and task-specific output quality.
-% - Reference-based vs reference-free evaluation.
-% - Human, learned, semantic, and judge-based evaluation.
-% - Safety/fairness/robustness as cross-cutting output properties.
+\paragraph{The quality construct.}
+Output quality is the assessment of a response or artifact produced by an LLM-based system, but the term cannot be reduced to a single notion of correctness. A response may be fluent yet false, semantically similar to a reference yet omit essential conditions, supported by a retrieved document yet fail to answer the user's actual question, or preferred by human evaluators despite violating a verifiable instruction. We therefore separate \emph{task correctness}, \emph{factual truthfulness}, \emph{faithfulness to provided evidence}, \emph{semantic similarity}, \emph{instruction compliance}, and \emph{human-perceived usefulness}. Safety and fairness may further qualify any of these constructs as cross-cutting properties. The purpose of this distinction is not to multiply labels unnecessarily, but to prevent scores obtained from different measurement assumptions from being interpreted as equivalent evidence of quality.
+
+\paragraph{Reference-based similarity and factual support.}
+Traditional lexical matching rewards overlap between an answer and one or more references, whereas contextual-embedding metrics aim to tolerate paraphrase and lexical variation. BERTScore, for example, aligns candidate and reference tokens in a contextual embedding space rather than requiring exact word matches \cite{zhang2020bertscore}. Its ICLR evaluation reports improved correlation with human judgments in the translation and captioning settings investigated. This establishes the usefulness of semantic reference similarity, not factual truth: a response can closely resemble a reference while preserving the wrong entity, quantity, or causal relation.
+
+Adlakha et al.\ make a more directly LLM-oriented distinction by evaluating \emph{correctness} against user information needs and \emph{faithfulness} against provided knowledge in question answering \cite{adlakha2024correctness}. Through human-annotated analysis, they show why conventional exact match and token-level F1 can be inadequate for verbose instruction-following responses. They propose simple overlap-based indicators for the two dimensions and examine abstention when supplied knowledge is irrelevant. Their evidence is particularly important for our taxonomy: output correctness, evidence faithfulness, and appropriate refusal can produce different assessments of the same answer. Nonetheless, because the evidence is explicitly conditioned on provided passages, the measured faithfulness should not be equated with factual verification against an independently established world state.
+
+\paragraph{Atomic factuality and hallucination detection.}
+TruthfulQA demonstrates that factuality cannot be inferred from a model's general ability to generate plausible language. Lin et al.\ construct 817 questions spanning 38 categories designed to expose answers that reproduce common misconceptions \cite{lin2022truthfulqa}. This is a targeted benchmark for truthfulness, not a general-purpose measurement of completeness, style, or usefulness.
+
+For long-form generations, Min et al.\ introduce FActScore, which decomposes responses into atomic factual claims and assesses the fraction supported by a trusted knowledge source \cite{min2023factscore}. Atomic decomposition is preferable to a single binary passage label when correct and unsupported assertions coexist. The method also illustrates a key measurement dependency: evidence collection and claim verification form part of the \emph{evaluation pipeline}. FActScore's use of retrieval to check generated statements does not necessarily mean that the generator under evaluation employed retrieval. The source of verification evidence must therefore be distinguished from the context available to the generation system.
+
+Zha et al.\ instead study factual consistency through AlignScore, a learned text-alignment function trained on heterogeneous supervision and evaluated on 22 datasets \cite{zha2023alignscore}. It estimates support or consistency between pieces of text, making it suitable for comparing an output with supplied evidence across tasks. The broader limitation remains construct-level: \emph{consistency with a source} is not synonymous with the source's \emph{independent factual correctness}. Manakul et al.\ propose SelfCheckGPT, which uses disagreement among stochastic samples from a black-box generator as an indicator of potentially non-factual statements \cite{manakul2023selfcheckgpt}. This reduces dependence on external reference documents, but mutual agreement among outputs is not, by itself, proof of truth; shared or repeated errors may remain stable across samples. Thus, these three approaches provide distinct signals---atomic evidence support, learned alignment, and self-consistency---rather than alternative names for one universal hallucination score.
+
+\paragraph{Human preferences and model-based judges.}
+Open-ended tasks such as summarization and dialogue also require criteria that are not always exhausted by reference matching or factual verification. G-Eval uses a strong LLM with a structured form-filling protocol to score natural-language generations and reports improved correspondence with human judgments in its evaluated summarization setting \cite{liu2023geval}. Its analysis simultaneously raises the possibility of preference bias toward LLM-generated text. This is an instructive instance in which the \emph{output} is the principal quality target, the \emph{LLM judge} is the method, and the reported agreement and bias analysis are evidence about the \emph{evaluator} itself. These aspects must be coded separately.
+
+Zheng et al.\ further examine judge-based assessment of conversational assistants with MT-Bench and Chatbot Arena, including human preference comparisons and known judge biases \cite{zheng2023mtbench}. Their contribution extends beyond individual response metrics, but it does not establish that an evaluator aligned with aggregate human preference will also verify factual statements, adhere to every instruction, or identify failures within a multi-stage application. As in the previous section, evaluator agreement is meaningful only relative to the target construct and the protocol used to elicit judgments.
+
+\paragraph{Verifiable constraints and executable outcomes.}
+Some output requirements are amenable to deterministic checks. Gu et al.\ introduce DINGO, an instruction-following evaluation benchmark organized around a fine-grained hierarchy of real-world user instructions \cite{gu2024dingo}. It reveals that treating instruction compliance as a single aggregate capability can obscure which kinds of constraints a model fails to satisfy. The boundary with input quality is important: a paper is classified as evaluating \emph{input/specification quality} only when properties of the specification are themselves measured or manipulated, not merely because a fixed instruction is supplied to test the produced response.
+
+The same distinction applies to generated code and software artifacts. SWE-bench evaluates whether a generated code change resolves a real-world repository issue under executable tests \cite{jimenez2024swebench}. Task-resolution success provides a stronger observable outcome than stylistic similarity to a reference patch, but does not reveal whether an agent used safe tools, efficient steps, or a reliable trajectory unless those are measured separately. In other words, final executable correctness can be a valid \emph{black-box task outcome} even when process and operational quality remain unobserved.
+
+\paragraph{Beyond a single output score.}
+A useful counterpoint to narrowly defined output metrics is HELM, which evaluates language models across scenarios using multiple desiderata including accuracy, calibration, robustness, fairness, bias, toxicity, and efficiency \cite{liang2023helm}. This provides important evidence that multi-metric evaluation existed before the recent surge of agentic and RAG-specific frameworks. However, multi-metric coverage should not automatically be counted as \emph{lifecycle-integrated assessment}: reporting accuracy alongside efficiency, for example, need not connect input specifications, retrieved evidence, intermediate behavior, or evaluator reliability through an explicit attribution model.
+
+Table~\ref{tab:output-quality-studies} summarizes the scope and evidentiary boundaries of representative peer-reviewed studies. It is a purposive comparison and does not imply their frequency or final integration level in the complete screened corpus.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Representative output-quality studies, distinguishing the quality construct, assessment mechanism, and the principal limit of inference.}
+\label{tab:output-quality-studies}
+\begin{tabular}{p{0.16\textwidth} p{0.20\textwidth} p{0.25\textwidth} p{0.27\textwidth}}
+\toprule
+\textbf{Study} & \textbf{Primary construct} & \textbf{Measurement mechanism} & \textbf{Interpretation / boundary} \\
+\midrule
+Zhang et al.\ \cite{zhang2020bertscore} & Semantic similarity & Contextual-embedding match to reference & Similarity is not independent factual verification \\
+Lin et al.\ \cite{lin2022truthfulqa} & Truthfulness & Targeted misconception-based questions & Benchmark is construct-specific, not overall helpfulness \\
+Min et al.\ \cite{min2023factscore} & Long-form factual support & Atomic claim decomposition and verification & Depends on evidence and claim checking; not coverage of all quality dimensions \\
+Zha et al.\ \cite{zha2023alignscore} & Evidence consistency & Learned source--output alignment & Agreement with source is not proof the source is true \\
+Adlakha et al.\ \cite{adlakha2024correctness} & Correctness, faithfulness, abstention & Human analysis and task-dependent overlap metrics & Output dimensions can disagree on a common response \\
+Manakul et al.\ \cite{manakul2023selfcheckgpt} & Hallucination indicators & Cross-sample consistency in a black-box model & Consistent generations may share unsupported claims \\
+Liu et al.\ \cite{liu2023geval} & Open-ended generation quality & Structured LLM-as-a-Judge; human agreement & Judge alignment and preference bias require separate analysis \\
+Gu et al.\ \cite{gu2024dingo} & Instruction following & Fine-grained benchmark of varied requests & Tests output compliance; not automatically input quality \\
+Jimenez et al.\ \cite{jimenez2024swebench} & Software task success & Executable repository-level test outcomes & Final success alone does not assess process or tool safety \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Implications for quality integration.}
+The evidence suggests that several seemingly similar output scores address genuinely different questions: \emph{Is the answer right? Is it supported by the supplied evidence? Does it satisfy the request? Is its style useful to a person? Does executable behavior meet the task objective?} No single metric should be assumed to answer all of them. Moreover, an output benchmark cannot explain failures in retrieval, specification, tool use, or operation unless those relations are explicitly investigated. The present survey will therefore record the measured output construct and its evaluation method independently, distinguish output evaluation from judge meta-evaluation, and treat cross-stage and lifecycle-integrated claims as empirical questions for final corpus coding rather than conclusions established by the existence of a multi-metric scorecard.
 
 \subsection{Conversation and Interaction Quality}
 \label{sec:conversation-quality}
