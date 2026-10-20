@@ -57,11 +57,55 @@ For the present survey, we will therefore code input quality only when input pro
 \subsection{Context and Retrieval Quality}
 \label{sec:context-quality}
 
-% TODO:
-% - Retrieval relevance, recall, precision, grounding, context sufficiency.
-% - RAG evaluation frameworks.
-% - Separate retrieval-quality metrics from final-answer metrics.
-% - Analyze retrieval -> output relationships and cases evaluated only black-box.
+\paragraph{Scope and attribution.}
+Retrieval-augmented generation (RAG) introduces a particularly useful test case for the distinction between component quality and system quality. A retriever must locate information relevant to a query; a generator must use that information appropriately; and the final answer must satisfy the user's task. These requirements overlap but are not interchangeable. A relevant passage may be insufficient to answer the question, an answer may be faithful to a passage that is factually wrong, and a correct answer may arise from model knowledge even when retrieval fails. Consequently, answer correctness, evidence-grounded faithfulness, context relevance, and context coverage are different constructs.
+
+For this survey, \emph{context and retrieval quality} is coded only when the retrieved evidence, its selection, coverage, ranking, or use is explicitly assessed. Merely including a retriever in the architecture is insufficient. Similarly, a final answer score for a RAG pipeline does not automatically establish retrieval-stage quality. The critical question for cross-stage assessment is whether a study independently characterizes retrieval and then analyzes how its properties relate to answer quality, rather than reporting several scores without examining their relationship.
+
+\paragraph{Separating retrieval from generation.}
+Es et al.\ introduce RAGAs, a reference-free evaluation framework that distinguishes the relevance of retrieved context from the faithfulness and quality of generation \cite{es2024ragas}. Its contribution is to operationalize different evaluation dimensions without requiring ground-truth reference answers for every example. However, a framework that computes several component-level metrics does not, by that fact alone, demonstrate causal attribution between components; the evaluator choices and validity of each score remain important.
+
+Saad-Falcon et al.\ propose ARES, which separately evaluates \emph{context relevance}, \emph{answer faithfulness}, and \emph{answer relevance} using lightweight learned judges trained on synthetically constructed examples \cite{saadfalcon2024ares}. ARES additionally uses a small human-annotated set with prediction-powered inference to correct aggregate estimates, and reports experiments across eight knowledge-intensive tasks and domain shifts. Its important methodological distinction is that automated judging is paired with explicit human calibration; human evidence is used to estimate evaluation quality rather than assuming a learned judge is intrinsically reliable. The resulting three dimensions should still be interpreted as distinct assessments, not as proof that retrieval alone caused a particular final answer.
+
+Ru et al.\ take a more diagnostic approach with RAGChecker \cite{ru2024ragchecker}. Rather than relying exclusively on a single holistic score, its fine-grained metrics target retrieval and generation behavior and support the analysis of module-specific failures. The authors evaluate eight RAG systems and report meta-evaluation against human judgments. This moves toward stage-aware diagnosis, yet its conclusions remain conditional on the annotated constructs, available reference evidence, and the reliability of the diagnostic metrics themselves. In particular, localizing a failure to a retrieval or generation component is stronger evidence than reporting final-answer correctness, but it is not automatically a causal intervention demonstrating that changing one component will improve the system.
+
+\paragraph{Evaluator choice is part of the evidence.}
+A retrieval-aware score is only as interpretable as the measurement procedure that produces it. Cho et al.\ provide a domain-specific empirical comparison in materials science, evaluating graphene-synthesis questions with human experts, BERTScore, LLM-as-a-Judge, and RAGAS \cite{cho2026graphene}. Across 20 questions, the evaluators did not respond equivalently to retrieval augmentation: the study reports that RAGAS detected relative improvements associated with RAG in its setting, while BERTScore and the tested LLM-judge protocol were less discriminative for that purpose. The authors also caution against interpreting RAGAS scores as absolute judgments of scientific answer quality. These results support a claim about \emph{evaluator behavior in a bounded scientific domain}, not universal superiority of one framework.
+
+Neloy and Islam broaden the concern through a controlled meta-analysis that applies 20 RAG evaluation frameworks to the same 200 question--context--answer examples \cite{neloy2026metarag}. They report heterogeneous judgments and a low median pairwise correlation ($r=0.21$) between frameworks. Importantly, this discrepancy should not be simplified into the claim that all evaluators are erroneous: different frameworks may be operationalizing different constructs, applying different scales, or making different assumptions about evidence. It does establish that scores from nominally similar RAG evaluators are not necessarily interchangeable, making construct definition, calibration, and evaluator selection essential parts of quality assessment.
+
+\paragraph{What integrated RAG evaluation currently means.}
+Recent secondary studies have already synthesized retrieval and generation within unified RAG-specific taxonomies. Knollmeyer et al.\ review 12 studies and organize context relevance, faithfulness, answer relevance, correctness, and citation quality together with evaluator families and dataset prerequisites \cite{knollmeyer2026rag}. Their framework is a \emph{proposed conceptual synthesis}, not an experimental validation that all its dimensions can be measured reliably in combination. Wu et al.\ provide a wider system-oriented RAG survey that explicitly distinguishes retrieval quality, generation quality, end-to-end robustness, and system-level efficiency; its discussion includes operational measures such as tail latency, throughput, and cost per query \cite{wu2026ragsurvey}. These contributions are particularly relevant prior work for the present survey and prevent any claim that RAG research has ignored multidimensional or system-level assessment.
+
+A further conceptual example is the reliability-aware architecture proposed by García-López and Guillén-Yparrea \cite{garcialopez2026reliabilityrag}. It brings contextual accuracy, faithfulness, refusal, latency, and human review into one proposed quality model for higher-education decision support. Its inclusion illustrates the need to record whether evaluation integration was \emph{proposed}, \emph{discussed}, or \emph{empirically used}: an integrated design can be a valuable research contribution without being treated as validated measurement evidence.
+
+Table~\ref{tab:context-quality-studies} compares representative primary and secondary contributions by the evidence each actually provides. It is a purposive illustration, not a prevalence analysis or the final integration coding of the complete corpus.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Representative peer-reviewed contributions to retrieval/context evaluation and their evidentiary limits.}
+\label{tab:context-quality-studies}
+\begin{tabular}{p{0.16\textwidth} p{0.20\textwidth} p{0.28\textwidth} p{0.27\textwidth}}
+\toprule
+\textbf{Study} & \textbf{Main focus} & \textbf{Evaluation evidence or design} & \textbf{Interpretation / limitation} \\
+\midrule
+Es et al.\ \cite{es2024ragas} & RAG metrics & Reference-free context and generation measures & Multiple measured dimensions do not alone prove stage attribution \\
+Saad-Falcon et al.\ \cite{saadfalcon2024ares} & Automated RAG evaluation & Three criteria; synthetic training plus human-calibrated estimates & Judge calibration is explicit; criteria remain distinguishable \\
+Ru et al.\ \cite{ru2024ragchecker} & Fine-grained diagnosis & Retrieval/generation metrics; eight systems; human meta-evaluation & Supports module-level diagnosis, subject to construct validity \\
+Cho et al.\ \cite{cho2026graphene} & Domain-specific evaluator comparison & Experts, BERTScore, LLM judge, RAGAS; 20 questions & Evaluator sensitivity and absolute-score interpretation differ \\
+Neloy and Islam \cite{neloy2026metarag} & Framework reliability & Twenty evaluators on 200 shared examples & Strong disagreement; metrics may capture different constructs \\
+Knollmeyer et al.\ \cite{knollmeyer2026rag} & RAG evaluation review & Dimensional framework and dataset/evaluator mapping & Conceptual synthesis, not an independent validation experiment \\
+Wu et al.\ \cite{wu2026ragsurvey} & System-oriented RAG review & Retrieval, generation, robustness and efficiency & Broad subsystem synthesis; not a lifecycle-wide LLM-quality audit \\
+García-López and Guillén-Yparrea \cite{garcialopez2026reliabilityrag} & Reliability-aware architecture & Proposed joint assessment including latency and human review & Proposed integration; not equivalent to empirical validation \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Synthesis for the research questions.}
+The RAG literature already contains both modular evaluation frameworks and studies that examine evaluator reliability; the missing piece cannot be asserted to be the mere existence of retrieval--generation links. Instead, this survey asks three more discriminating questions. First, which studies \emph{measure relationships} between retrieval and downstream outcomes, as opposed to presenting side-by-side metrics or a black-box answer score? Second, when a metric or judge is used to substantiate such relationships, what evidence establishes its validity and stability? Third, when trade-offs involving latency, cost, refusal, or operational reliability are introduced, are they jointly evaluated and attributed to system stages, or merely discussed as additional desiderata?
+
+These distinctions provide concrete evidence categories for RQ1--RQ5. They also guard against prematurely labeling any RAG study as \emph{lifecycle-integrated} based only on its architecture or its use of the term end-to-end. The distribution of studies across integration levels, and any claim that particular relationships remain underexplored, will be reported only after the academic corpus and human coding are finalized.
 
 \subsection{Output and Response Quality}
 \label{sec:output-quality}
