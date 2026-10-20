@@ -1,33 +1,36 @@
 \section{Evaluation Methods and Protocols}
 \label{sec:evaluation-methods}
+This section changes the unit of analysis from the quality dimension being evaluated to the method producing a judgment. The same method may assess different lifecycle stages, while a single quality construct can be measured with incompatible protocols. The cases below illustrate peer-reviewed evidence and do not represent prevalence in the final screened corpus.
 
-This section reorganizes the corpus by \emph{how} quality is measured rather than by the lifecycle dimension being evaluated. The purpose is to identify where the same method is reused across different targets, where methods disagree, and where measurement validity has been independently examined.
-
-\subsection{Deterministic, Rule-Based, and Execution-Based Evaluation}
-% TODO: exact-match rules, executable tests, state verification, task completion.
+\subsection{Deterministic and Execution-Based Evaluation}
+Exact-match tests, schema checks, executable unit tests, and environment-state checks support reproducible judgments when the task is explicitly specified. SWE-bench uses executable verification for repository-level repair \cite{jimenez2024swebench}; WebArena and $\tau$-bench examine task completion in interactive environments \cite{zhou2024webarena,yao2025taubench}. A successful outcome, however, does not demonstrate that all intermediate actions were correct, safe, or efficient; likewise, incomplete tests may miss important defects. We distinguish constraint satisfaction, terminal task success, and process quality.
 
 \subsection{Lexical, Reference-Based, and Semantic Metrics}
-% TODO: overlap metrics, embedding similarity, semantic/factual metrics, limitations.
+Text overlap is easy to reproduce but can reject accurate paraphrases and accept misleading similarities. BERTScore addresses some lexical limitations with contextual representations \cite{zhang2020bertscore}. FActScore instead decomposes long responses into atomic claims and tests support from evidence \cite{min2023factscore}; AlignScore assesses textual support and alignment \cite{zha2023alignscore}. These metrics measure different constructs: semantic similarity is not correctness, and support from a context is not necessarily truth. RAG assessment must independently represent context relevance and generated-answer faithfulness \cite{es2024ragas}.
 
 \subsection{Learned Evaluators}
-% TODO: classifiers, reward models, specialized evaluators.
+Trained classifiers and specialized evaluation models make large-scale scoring feasible but depend on the provenance and validity of their labels. ARES trains judges using synthetic material and calibrates aggregate estimates with a human-labeled sample \cite{saadfalcon2024ares}. The calibration step distinguishes a validated estimate from simply treating synthetic labels as ground truth. We code training evidence, external validation, distribution shift, and uncertainty separately.
 
 \subsection{Human Evaluation}
-% TODO: experts vs crowd raters, rubrics, pairwise preference, inter-rater agreement.
+Human assessment supports contextual judgments, expert correctness, and subjective preferences, but remains sensitive to rater expertise, sampling, instructions, and rubrics. Chatbot Arena collects comparative preferences, and MT-bench provides structured multi-turn evaluation \cite{zheng2023mtbench}. Preference agreement cannot automatically stand in for factual accuracy. Domain-specific RAG comparisons also show that human experts and automatic evaluators may respond differently to the same examples \cite{cho2026graphene}. The annotation protocol and inter-rater reliability are therefore part of the evidence.
 
 \subsection{LLM-as-a-Judge}
-% TODO: absolute scoring, pairwise evaluation, rubrics, critique.
-% Keep this as one method family, not the organizing center of the survey.
+Model judges can produce absolute scores, pairwise preferences, rankings, or rubric-based critiques. G-Eval compares structured language-model ratings with human judgments \cite{liu2023geval}; MT-bench analyzes agreement and position, verbosity, and self-enhancement biases \cite{zheng2023mtbench}. The mere use of an LLM judge is not evidence that the judge was validated. Reliability requires direct tests of agreement, calibration, consistency, or robustness. We separately record judge identity, prompting, references, protocol, and independent validation.
 
 \subsection{Multi-Judge and Ensemble Evaluation}
-% TODO: voting, aggregation, heterogeneous judges, dependence among judges.
+Voting, weighted scores, debate, and adjudication may combine multiple judges. However, models sharing training data, prompts, or biases can agree on the same errors. More judges are not necessarily better judges. Empirical comparisons should include single-judge baselines, aggregation rules, external validation, cost, and dependence between judges. We do not infer an optimal ensemble size before auditing the relevant studies.
 
-\subsection{Adversarial, Red-Team, and Perturbation-Based Evaluation}
-% TODO: robustness, persuasion, prompt perturbation, mutation testing.
+\subsection{Adversarial and Perturbation-Based Evaluation}
+Red-teaming explores failures, whereas controlled perturbations assess stability under specified invariants. Sclar et al. demonstrate sensitivity to prompt formatting \cite{sclar2024formatting}, and POSIX quantifies sensitivity to different substitutions \cite{chatterjee2024posix}. These results describe input-to-output sensitivity, not the intrinsic quality of a single prompt. Perturbations may also target retrieval, agent traces, or judges. We code which properties were intended to remain constant and whether interventions genuinely preserve the task.
 
 \subsection{Trace-Aware Evaluation}
-% TODO: intermediate states, agent traces, tool calls, observability-assisted evaluation.
+AgentBoard evaluates intermediate progress \cite{ma2024agentboard}; AgentJudge examines agent behaviors \cite{zhuge2025agentjudge}; RAGChecker provides diagnostic retrieval and generation metrics \cite{ru2024ragchecker}. Intermediate measurements are useful for localizing failures, but observation is not causal attribution. Proving that one stage caused a downstream error generally requires a controlled comparison or intervention. We distinguish trace capture, diagnostic evaluation, and verified attribution.
 
 \subsection{Statistical Reliability and Meta-Evaluation}
-% TODO: agreement coefficients, calibration, consistency, evaluator disagreement,
-% cross-domain generalization and validity.
+Reliability describes reproducibility and agreement; validity concerns whether the score measures the intended construct. RAG evaluation frameworks can disagree substantially on the same examples \cite{neloy2026metarag}, potentially because they embody different constructs and assumptions. Agreement coefficients, calibration, correlations, and perturbation stability answer different questions. Our own human coding agreement (Section~\ref{sec:methodology}) will be measured separately from automated classifier performance.
+
+\subsection{Hybrid and Multi-Metric Protocols}
+HELM illustrates consistent evaluation across scenarios and properties, uncovering trade-offs absent from single-metric comparisons \cite{liang2023helm}. Yet a multidimensional scorecard does not necessarily measure dependencies between lifecycle stages. Hybrid evaluations may increase coverage without explaining which upstream factor caused a downstream outcome. We therefore distinguish method applicability, independently validated measurement, combined scoring, and demonstrated cross-stage relationships.
+
+\paragraph{Synthesis.}
+For RQ2, evaluation methods measure heterogeneous signals and are not interchangeable proxies for an unspecified overall quality. For RQ4, the validity of the evaluator must be assessed independently. For RQ3, combining metrics is weaker evidence than explicitly testing how quality propagates across stages. Section~\ref{sec:integration} develops this distinction.
