@@ -1,0 +1,33 @@
+\section{Relationship to Existing Surveys}
+\label{sec:prior-surveys}
+
+The literature already contains several strong surveys on LLM evaluation, but the closest works identified in our screening are predominantly organized around a \emph{specific subsystem}, \emph{system class}, or \emph{evaluation mechanism}. This distinction is important because the objective of the present survey is not to replace those specialized reviews. Instead, it connects them through a common lifecycle-oriented view of quality assessment and asks how evidence from different stages can be combined into an end-to-end account of system quality.
+
+Agent evaluation is currently one of the best-developed secondary-literature areas. Yehudai et al. survey LLM-based agent evaluation across core agent capabilities, application-specific and generalist benchmarks, benchmark dimensions, and developer frameworks \cite{yehudai2026surveyagents}. Kehkashan et al. move closer to deployment concerns by emphasizing trajectory-level evaluation, safety, cost efficiency, maintainability, and the limitations of task-success-oriented benchmarks \cite{kehkashan2026benchmarks}. Nageshwaran et al. provide an even more explicit validity-centered account of agent evaluation, organizing benchmarks by what capability is measured, how it is scored, and where it is tested, while also analyzing contamination, non-determinism, and execution cost \cite{nageshwaran2026agent}. These surveys are highly relevant to our Agent/Process/Trajectory and Operational/System dimensions. Their scope, however, is intentionally agent-centric: static LLM evaluation, prompt quality, general RAG evaluation, and non-agentic interaction quality fall outside or at the boundary of their central object of study.
+
+A second major cluster focuses on RAG. Knollmeyer et al. synthesize RAG evaluation dimensions, metrics, evaluator types, dataset prerequisites, and pipeline stages, with an explicit emphasis on linking retrieval and generation evaluation \cite{knollmeyer2026rag}. Wu et al. provide a broader survey of RAG architectures, retrieval fusions, applications, training strategies, evaluation methods, and deployment considerations \cite{wu2026ragsurvey}. These works provide much of the conceptual foundation for our Context/Retrieval dimension and for retrieval-to-output cross-stage analysis. Nevertheless, RAG remains one subsystem in the broader lifecycle considered here; prompt specification, conversational persistence, agent trajectories, evaluator reliability, and system-wide operational quality are not jointly treated as a single quality-assessment problem.
+
+A third line of work concentrates on the evaluator itself. Nadăş surveys LLM-as-a-Judge techniques, prompting strategies, ensemble and multi-agent judging pipelines, applications, biases, calibration, reproducibility, and adversarial robustness \cite{nadas2026judges}. This work is especially important for our distinction between \emph{using} an LLM judge and \emph{evaluating} the reliability of that judge. In the present survey, however, LLM-as-a-Judge is one evaluation-method family among several rather than the organizing object of the review. Judge reliability is represented as a meta-evaluation layer that can affect measurements made at any lifecycle stage.
+
+Table~\ref{tab:prior-surveys} summarizes the relationship between the closest prior surveys and the present work. The main difference is therefore one of \emph{integration scope}. Prior surveys provide deep analyses of agents, RAG, or LLM-based judging. Our survey instead uses those areas as parts of a common measurement problem spanning input specification, context, output, interaction, process, operation, and evaluator reliability. We additionally distinguish multidimensionality from integration: reporting several metrics does not itself demonstrate how quality propagates across stages. This motivates our explicit coding of isolated evaluation, cross-stage evaluation, black-box end-to-end evaluation, and lifecycle-integrated evaluation.
+
+\begin{table*}[t]
+\caption{Closest prior surveys identified in the current screening and their relationship to this survey.}
+\label{tab:prior-surveys}
+\begin{tabular}{p{0.20\textwidth} p{0.22\textwidth} p{0.27\textwidth} p{0.23\textwidth}}
+\toprule
+\textbf{Survey} & \textbf{Primary scope} & \textbf{Main evaluation contribution} & \textbf{Boundary relative to this survey} \\
+\midrule
+Yehudai et al. \cite{yehudai2026surveyagents} & LLM-based agents & Agent capabilities, application/generalist benchmarks, benchmark dimensions, developer frameworks & Agent-centric; does not organize the complete LLM-system lifecycle \\
+Kehkashan et al. \cite{kehkashan2026benchmarks} & Agentic AI evaluation & Deployment gap, trajectories, safety, cost and benchmark insufficiencies & Deep agent/deployment focus; non-agentic stages are outside the central scope \\
+Nageshwaran et al. \cite{nageshwaran2026agent} & Agent evaluation and benchmarking & What/how/where meta-taxonomy and benchmark-validity analysis & Validity-centered but deliberately restricted to agentic evaluation \\
+Knollmeyer et al. \cite{knollmeyer2026rag} & RAG evaluation & Evaluation dimensions, metrics, evaluators, datasets and retrieval--generation links & RAG-specific; does not span interaction, agents, general operations and evaluator meta-quality together \\
+Wu et al. \cite{wu2026ragsurvey} & RAG for NLP & RAG architectures, retrieval fusion, applications, evaluation and deployment & Broad RAG survey, but evaluation is embedded within the RAG system scope \\
+Nadăş \cite{nadas2026judges} & LLM-as-a-Judge & Judging tasks, protocols, pipelines, biases and judge quality & Method-centric; LLM judging is one method family in the present survey \\
+\midrule
+\textbf{This survey} & \textbf{LLM-system quality across the lifecycle} & \textbf{Dimensions + methods + evaluator meta-quality + integration level} & \textbf{Cross-stage and end-to-end synthesis across system classes} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The broader screening also contains domain-oriented reviews and narrower surveys on prompt optimization, prompt injection, cybersecurity, cyber-physical systems, energy applications, healthcare, and multi-agent collaboration. These works are retained when they contribute evidence to one or more dimensions, but they do not constitute direct substitutes for a lifecycle-wide survey of LLM-system quality assessment. Their role in the final synthesis will therefore be dimension-specific rather than as the primary novelty baseline.
