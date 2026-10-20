@@ -27,7 +27,14 @@ def main():
         with path.open(newline="",encoding="utf-8-sig") as f:
             rows=list(csv.DictReader(f))
         for n,row in enumerate(rows):
-            assert int(row["source_row_index"])==n,(path,n)
+            # Older exported CSVs lost numeric zero (0 became an empty string).
+            # Recover the original row index from its position in the block.
+            original_index = row["source_row_index"].strip()
+            if original_index == "" and n == 0:
+                row["source_row_index"] = "0"
+            elif original_index == "":
+                raise ValueError(f"Missing source index in {path} at source row {n}")
+            assert int(row["source_row_index"]) == n, (path, n)
             assert row["source_block"]==f"Bloco{block}",(path,n)
             assert len(row["pdf_sha1"])==40,(path,n)
             # Stable IDs: retain source order including duplicates, never reorder by title.
