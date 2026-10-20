@@ -168,11 +168,56 @@ The evidence suggests that several seemingly similar output scores address genui
 \subsection{Conversation and Interaction Quality}
 \label{sec:conversation-quality}
 
-% TODO:
-% - Multi-turn consistency and state maintenance.
-% - User-goal completion and adaptation to feedback.
-% - Dynamic evaluation and user simulation.
-% - Long-horizon failure propagation.
+\paragraph{From response quality to interaction quality.}
+A conversation is not simply a set of independent outputs. User goals may change, earlier constraints may remain binding, new information may correct previous assumptions, and the system may need to recover from errors or ask for clarification. Consequently, a model that answers each turn plausibly in isolation may still provide a poor overall interaction. We distinguish \emph{cross-turn consistency}, \emph{recollection and state maintenance}, \emph{adaptation to feedback or revised instructions}, \emph{long-term memory}, and \emph{interaction-level goal completion}. These constructs partly overlap with input, context, and output quality but are not reducible to any of them. In coding this dimension, we therefore require evaluation of an actual turn dependency, persistent state, or interactive feedback loop; merely presenting several unrelated prompts does not suffice.
+
+\paragraph{Cross-turn dependencies and error propagation.}
+Kwan et al.\ introduce MT-Eval to examine four recurring interaction patterns: recollection, expansion, refinement, and follow-up \cite{kwan2024mteval}. Importantly, they construct single-turn counterparts for 1,170 multi-turn queries and compare ten models. The observed performance degradation in multi-turn settings makes the evaluation more informative than simply aggregating answer scores across turns. Their analysis identifies both the distance to relevant earlier information and the propagation of prior errors as factors affecting conversational performance. The paired evaluation design provides evidence of a \emph{cross-turn effect}, although it should not be interpreted as causal attribution to a single internal subsystem.
+
+Deshpande et al.\ approach the same problem from challenging realistic interactions. MultiChallenge targets four situations requiring instruction following, context allocation, and in-context reasoning across turns \cite{deshpande2025multichallenge}. Its authors report that the evaluated frontier systems remained below 50\% accuracy, despite high performance on existing conversation benchmarks; the top system in their experiments achieved 41.4\%. The result should be understood within the specific challenge construction and evaluated model versions, not as a universal accuracy estimate for deployed assistants. MultiChallenge also employs instance-level rubrics and LLM-based judges, with comparisons to experienced human raters. This creates two separately coded objects: \emph{conversation quality} as the target and \emph{judge agreement} as meta-evaluation evidence. Importantly, the existence of a judge does not itself establish its reliability.
+
+CMT-Eval extends benchmark design to Chinese-language, persona-sensitive conversational settings \cite{tian2025cmteval}. Its speech-act-driven dataset contains 596 dialogues and 4,431 turns, with variation in user personas and interaction challenges. The work illustrates that evaluation scenarios and conversational conventions are themselves methodological choices: a test suite restricted to one language, interaction style, or persona distribution cannot be presumed to cover all forms of user adaptation. The relevant concern is not only final-turn correctness but whether the assistant responds appropriately to evolving dialogue intentions.
+
+\paragraph{Memory across sessions.}
+Memory-oriented evaluations introduce a further distinction between retaining conversational information and using it correctly when needed. Maharana et al.\ introduce LoCoMo, a dataset of very long-term conversations grounded in personas and temporal event graphs \cite{maharana2024locomo}. Its dialogues average approximately 600 turns and 16,000 tokens across as many as 32 sessions, and the benchmark probes question answering, event summarization, and multimodal dialogue generation. Their experimental comparisons indicate substantial difficulties with long-range temporal and causal understanding despite improvements from long-context models or retrieval-augmented strategies. A single correct answer to a memory question does not reveal whether the relevant event was retrieved correctly, whether chronology was reconstructed, or whether a generated answer relied on unsupported assumptions.
+
+LongMemEval offers a more explicitly decomposable perspective \cite{wu2025longmemeval}. Its 500 questions test information extraction, multi-session reasoning, temporal reasoning, knowledge updates, and abstention. Beyond reporting a drop in memory accuracy over sustained interactions, Wu et al.\ analyze memory systems through \emph{indexing}, \emph{retrieval}, and \emph{reading}, and investigate design interventions at these stages. This is an important cross-stage counterexample to any claim that conversational evaluation is limited to final response scoring. However, such studies primarily analyze long-term conversational memory: they do not automatically integrate evaluator reliability, agent trajectories, and operational quality into a common system-wide measurement.
+
+\paragraph{Feedback, simulation, and interactive task success.}
+Static transcript evaluation differs from an environment in which the user or system reacts to previous behavior. MINT explicitly evaluates multi-turn interaction with tools and natural-language feedback \cite{wang2024mint}. Its controlled setup allows LLMs to execute Python-based tools and receive feedback simulated by GPT-4, with tests spanning reasoning, coding, and decision-making. Its experiments show that stronger single-turn capability need not predict greater benefit from feedback or tools. In our taxonomy, interaction quality and process/trajectory quality can both be evaluated in a study when the evidence genuinely targets each; tool availability by itself is not enough to infer that tool-use quality was measured.
+
+For goal-oriented conversations, Yao et al.\ present $\tau$-bench, which simulates user--agent exchanges in retail and airline domains with tools and policy constraints \cite{yao2025taubench}. Rather than asking a judge whether the final message sounds helpful, the benchmark compares the resulting database state with the annotated goal state and uses the $\mathrm{pass}^{k}$ metric to characterize reliability over repeated trials. The paper reports substantial inconsistency under repeated executions. This is stronger verification of interactive task completion than a single natural-language score, but it remains a \emph{task-level outcome}: a correct final state does not necessarily establish that every intermediate action was safe, efficient, or policy-compliant unless the relevant trace is also examined. The setup additionally depends on the validity of simulated user behavior and the specified database goals.
+
+Zhou et al.\ study another form of interaction with SOTOPIA, an environment for role-play scenarios involving communication, cooperation, competition, and social goals \cite{zhou2024sotopia}. SOTOPIA-Eval assesses social intelligence in simulated human/agent interactions, thus targeting qualities that may be difficult to express through exact-match outcomes. The contribution broadens the interpretation of interaction quality beyond information recall or task completion, but the ecological validity of a simulated social environment and the reliability of judgment protocols remain separate questions. Together, MINT, $\tau$-bench, and SOTOPIA demonstrate that interaction evaluation can involve dynamic feedback, environment state, human-like social goals, and evaluators with very different measurement assumptions.
+
+\paragraph{Comparative evidence.}
+Table~\ref{tab:conversation-quality-studies} summarizes representative peer-reviewed contributions. The table records the \emph{construct evaluated} and \emph{evidence produced}; it does not preassign final integration levels, which require the complete coding protocol.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Representative evaluations of conversation and interaction quality.}
+\label{tab:conversation-quality-studies}
+\begin{tabular}{p{0.16\textwidth} p{0.21\textwidth} p{0.27\textwidth} p{0.25\textwidth}}
+\toprule
+\textbf{Study} & \textbf{Interaction construct} & \textbf{Evaluation design / signal} & \textbf{Important boundary} \\
+\midrule
+MT-Eval \cite{kwan2024mteval} & Recollection, expansion, refinement, follow-up & Paired single-/multi-turn performance & Reveals turn effects, not internal causal attribution \\
+MultiChallenge \cite{deshpande2025multichallenge} & Cross-turn instruction/context handling & Challenging interactions; rubric judge; human agreement & Judge validity and task accuracy are separate \\
+CMT-Eval \cite{tian2025cmteval} & Speech acts and persona-sensitive dialogue & 596 dialogues; 4,431 turns & Dataset language/persona restricts generalization \\
+LoCoMo \cite{maharana2024locomo} & Long-range memory, temporal/causal coherence & Multi-session dialogue QA, summaries, multimodal tasks & Final recall does not identify memory failure stage \\
+LongMemEval \cite{wu2025longmemeval} & Memory updates, temporal reasoning, abstention & 500 questions; indexing/retrieval/reading analysis & Strong memory-stage analysis, not total system quality \\
+MINT \cite{wang2024mint} & Feedback adaptation and interactive tool use & Multi-step tasks; simulated user feedback and tools & Simulated feedback and trace scope affect interpretation \\
+$\tau$-bench \cite{yao2025taubench} & Goal completion and repeatability & Simulated users; database goal state; $\mathrm{pass}^{k}$ & End-state success alone does not verify trajectory \\
+SOTOPIA \cite{zhou2024sotopia} & Social interaction and goal achievement & Interactive role-play; SOTOPIA-Eval & Social judgment validity is protocol-dependent \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Synthesis for lifecycle integration.}
+These studies demonstrate why conversation quality is a distinct lifecycle target rather than an enlarged output benchmark. Interaction failures may arise from forgotten instructions, outdated or incorrectly updated memory, inappropriate responses to user feedback, or incorrect actions within an evolving environment. Evidence of \emph{cross-turn deterioration} is not equivalent to evidence of \emph{memory-stage attribution}; likewise, task success over several turns is not proof of correct intermediate behavior. The measurement method also matters: reference answers, rubric-based LLM judges, environment-state checks, and repeatability statistics target different constructs and require different validation.
+
+For our final synthesis, we will therefore code conversation/interaction quality alongside, but separately from, context retrieval and agent/process quality. We will record whether earlier state is explicitly manipulated or assessed, whether feedback changes subsequent behavior, whether tasks are judged turn-by-turn or from final outcomes, and whether simulated users and evaluators have independent reliability evidence. The existence and prevalence of \emph{lifecycle-integrated} conversation-quality frameworks remain empirical questions for the fully screened corpus; they cannot be inferred from a long dialogue, a multi-metric scoreboard, or the use of an LLM simulator alone.
 
 \subsection{Agent, Process, and Trajectory Quality}
 \label{sec:agent-quality}
