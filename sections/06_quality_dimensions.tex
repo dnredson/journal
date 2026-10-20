@@ -278,12 +278,55 @@ We consequently code agent/process quality only when execution behavior is a sub
 \subsection{Operational and System Quality}
 \label{sec:operational-quality}
 
-% TODO:
-% - Latency, throughput, cost/query, tokens, memory, energy.
-% - Availability, observability, privacy, safety.
-% - Development vs production evaluation.
-% - Quality-cost trade-offs.
-% - Relationship between semantic quality and deployment constraints.
+\paragraph{Quality under deployment constraints.}
+An LLM-based application can generate correct and useful outputs in an offline experiment while failing to provide acceptable service when deployed under concurrent demand, limited memory, latency constraints, or a fixed energy budget. Operational and system quality therefore concerns the resources and service properties required to deliver model behavior in practice. Representative constructs include \emph{time to first token} (TTFT), \emph{time per output token} (TPOT), end-to-end response latency, tail latency, throughput, capacity subject to service-level objectives (SLOs), memory utilization, energy consumption, financial cost, and service reliability. Availability, observability, privacy, and operational safety also belong within this dimension when they are actually measured; their architectural presence or discussion alone does not imply empirical evaluation.
+
+These quantities are not interchangeable. For example, throughput can improve while individual requests suffer additional delay; a cost-saving policy can reduce the resources available to meet latency objectives; and a model with attractive token throughput may still have unacceptable end-to-end latency in a retrieval-and-tool-using workflow. Likewise, a high proportion of requests meeting a latency SLO is evidence about \emph{performance compliance}, not necessarily measured service \emph{uptime or availability}. Our classification consequently records the operational construct, workload, hardware, units, and aggregation statistic rather than treating all system benchmarks as one generic efficiency score.
+
+\paragraph{Memory, batching, and serving capacity.}
+Kwon et al.\ introduce PagedAttention and the vLLM serving system to address fragmentation and redundant duplication of the growing key--value cache \cite{kwon2023vllm}. Their SOSP evaluation reports approximately 2--4 times higher throughput than compared serving systems at a similar latency in the tested configurations. This is a direct measurement of inference-serving efficiency, not evidence that semantic accuracy or the quality of an agent's decisions improved. Its results also depend on request lengths, batch scheduling, decoding strategy, model, and accelerator configuration; a throughput multiplier should not be generalized without retaining these experimental conditions.
+
+Agrawal et al.\ analyze the interaction between the compute-intensive prompt-prefill stage and token-by-token decoding in Sarathi-Serve \cite{agrawal2024sarathi}. Chunked prefills and stall-free batching improve capacity under tail-latency constraints in the authors' OSDI experiments. By exposing how two phases interfere, this study provides a clear \emph{cross-stage operational} relationship: optimizing average throughput alone is insufficient when serving objectives apply to individual requests or decoding tokens. However, the phases in this example are inference-serving phases rather than our entire application lifecycle; measuring prefill--decode interactions is not equivalent to integrating retrieval, output correctness, judge reliability, and production operations.
+
+DistServe addresses a related trade-off by disaggregating prefill and decoding across GPUs \cite{zhong2024distserve}. Its OSDI study jointly considers TTFT and TPOT constraints, defining \emph{goodput} through the request rate served while satisfying latency requirements. In the evaluated settings, it reports substantial improvements in request-handling capacity while meeting latency bounds for over 90\% of requests. This makes an important methodological point: a system-oriented evaluation must specify both \emph{the performance objective} and \emph{the feasibility constraint}. Raw requests per second without latency compliance can give an incomplete account of delivered service quality.
+
+\paragraph{Resource efficiency, cost, and structured workloads.}
+The relative cost of inference phases also motivates Splitwise, which assigns prompt processing and token generation to different machines optimized for their resource demands \cite{patel2024splitwise}. Its ISCA experiments report configurations delivering up to 1.4 times the throughput at 20\% lower cost, or greater throughput under fixed power and cost budgets. These results show that cost, power, and throughput may be evaluated jointly rather than as unrelated engineering concerns. They do not, on their own, demonstrate how these resource savings affect response faithfulness, user-perceived utility, or interaction quality.
+
+At the language-program level, Zheng et al.\ introduce SGLang, combining a programming interface with runtime optimizations such as reuse of key--value states and accelerated constrained decoding \cite{zheng2024sglang}. Evaluations cover structured generation, tool-oriented programs, RAG pipelines, and multi-turn interactions, with up to 6.4 times the throughput of compared serving systems in reported workloads. The inclusion of higher-level LLM applications is important: operational behavior can depend on control flow, prompt reuse, and output-format restrictions. Nevertheless, benchmarking an application's runtime does not automatically establish quality of its retrieved evidence or the correctness of its output.
+
+\paragraph{Energy and performance-aware adaptation.}
+Efficiency evaluation is expanding beyond throughput and monetary cost. Poddar et al.\ benchmark inference energy across models, tasks, prompts, and system configurations \cite{poddar2025energy}. Their NAACL study finds a strong relationship between energy, response time, and output length, and investigates the effects of quantization and batching. In our taxonomy, energy is explicitly a quality-related system property when measured, while output quality must remain a distinct target unless the experiment connects energy-saving interventions to changes in answer quality. An energy reduction by itself is not evidence of semantic equivalence.
+
+Stojkovic et al.\ evaluate DynamoLLM, an approach for dynamically configuring inference clusters to reduce energy and operational carbon emissions under service-level constraints \cite{stojkovic2025dynamollm}. Their HPCA study reports average energy savings of approximately 52\%, operational carbon reductions of 38\%, and customer-cost reductions of 61\%, while satisfying the studied latency SLOs. This offers stronger evidence of an \emph{operational trade-off under constraints} than merely reporting accelerator utilization. It remains dependent on the simulation or deployment assumptions, workload traces, regional power/carbon inputs, and hardware selection documented in the original study. Such results cannot be interpreted as universally portable savings.
+
+\paragraph{System-level metrics and their limits.}
+Table~\ref{tab:operational-quality-studies} contrasts representative peer-reviewed studies according to their evaluation targets. Although these papers all measure important aspects of service quality, they are not evidence that one universally accepted composite metric for LLM-system quality has emerged.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Representative peer-reviewed evaluations of operational and system quality. The studies are illustrative and are not yet the final included corpus.}
+\label{tab:operational-quality-studies}
+\begin{tabular}{p{0.17\textwidth} p{0.21\textwidth} p{0.27\textwidth} p{0.24\textwidth}}
+\toprule
+\textbf{Study} & \textbf{Primary operational target} & \textbf{Evaluation signal / constraint} & \textbf{Boundary of evidence} \\
+\midrule
+vLLM \cite{kwon2023vllm} & KV-cache memory and batching & Throughput at comparable latency & Does not directly assess answer quality \\
+Sarathi-Serve \cite{agrawal2024sarathi} & Prefill/decoding scheduling & Serving capacity with tail-latency constraints & Inference phases, not full application lifecycle \\
+DistServe \cite{zhong2024distserve} & Prefill/decoding disaggregation & TTFT/TPOT-constrained goodput & SLO compliance differs from uptime \\
+Splitwise \cite{patel2024splitwise} & Power, hardware, cost & Throughput--cost--power alternatives & Quality of generated content not directly established \\
+SGLang \cite{zheng2024sglang} & Structured LLM program execution & Runtime throughput across application workloads & Workload execution not a factuality guarantee \\
+Poddar et al.\ \cite{poddar2025energy} & Inference energy & Measured energy across tasks, models, settings & Energy savings not proof of semantic equivalence \\
+DynamoLLM \cite{stojkovic2025dynamollm} & Energy/carbon/cost under SLOs & Cluster adaptation and latency compliance & Reported savings are workload-dependent \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Implications for lifecycle integration.}
+These studies establish that operational assessment already includes sophisticated relationships among latency, throughput, memory, power, cost, and workload structure. Therefore, our survey must not claim that operational evaluation is absent or uniformly one-dimensional. The more specific unresolved question is \emph{how frequently and with what evidence} operational properties are assessed together with specification, retrieval, generated-output correctness, conversational behavior, agent trajectories, and evaluator reliability. Tail-latency compliance during serving is not equivalent to task-level success, and a throughput--cost optimum need not be a quality optimum from the user's perspective.
+
+In the final coding, an operational dimension will be assigned only when measured or analyzed rather than merely mentioned. We will distinguish offline profiling from online service measurements; average latency from tail latency; raw throughput from SLO-constrained goodput; estimated from measured energy; modeled from observed cost; and performance reliability from service availability. We will record explicitly whether system interventions are tested for effects on downstream semantic or interaction quality. Only such evidence will support claims about cross-stage relationships or lifecycle-integrated quality; a dashboard containing several operational indicators is not, by itself, an integrated assessment.
 
 \subsection{Evaluator Reliability and Meta-Evaluation}
 \label{sec:evaluator-reliability}
