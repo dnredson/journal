@@ -63,25 +63,12 @@ This distinction is particularly important for LLM-as-a-Judge. The statement tha
 
 \subsection{Conceptual Overview}
 
-Figure~\ref{fig:taxonomy} will present the taxonomy as a circular lifecycle. The inner structure represents the six system-quality dimensions. Evaluation methods form a second layer that can act on any dimension. The outer layer represents evaluator reliability and other meta-evaluation concerns.
+Figure~\ref{fig:taxonomy} summarizes the taxonomy as a circular hierarchy. The inner ring represents the seven primary assessment targets used in the survey: the six lifecycle dimensions and evaluator reliability as a meta-evaluation target. The outer ring decomposes each target into the recurring subdimensions used during coding and synthesis. The circular structure is deliberately not a maturity scale or a sequential execution model; rather, it is a compact map of the dimensions whose quality may be assessed independently or jointly.
 
 \begin{figure*}[t]
     \centering
-    \fbox{
-        \parbox{0.92\textwidth}{
-        \centering
-        \textbf{Placeholder for final circular taxonomy}\\[5pt]
-        Lifecycle dimensions: Input/Specification $\rightarrow$ Context/Retrieval
-        $\rightarrow$ Output $\rightarrow$ Conversation/Interaction
-        $\rightarrow$ Agent/Process/Trajectory $\rightarrow$ Operational/System\\[5pt]
-        Evaluation layer: rules, reference metrics, semantic metrics, learned evaluators,
-        humans, LLM judges, multi-judge schemes, task/environment checks, adversarial
-        evaluation, perturbation, trace-aware evaluation\\[5pt]
-        Meta-evaluation layer: reliability, agreement, consistency, calibration,
-        bias, robustness
-        }
-    }
-    \caption{Conceptual organization of LLM-system quality assessment. The lifecycle defines what is evaluated; evaluation methods define how it is measured; evaluator reliability characterizes the measurement process itself.}
+    \resizebox{0.92\textwidth}{!}{\input{figures/taxonomy_sunburst.tex}}
+    \caption{Hierarchical taxonomy used to organize LLM-system quality assessment. The inner ring identifies the primary quality dimensions and evaluator reliability; the outer ring illustrates representative subdimensions used during classification and synthesis.}
     \label{fig:taxonomy}
 \end{figure*}
 
