@@ -1,25 +1,65 @@
 \section{Research Gaps and Directions}
 \label{sec:gaps}
 
-The final gap analysis will be derived from the validated evidence matrix rather than from the taxonomy alone. Candidate gaps are listed here only as working hypotheses and will be retained, revised, or rejected according to the final corpus.
+The earlier sections reveal several tensions in how the quality of LLM-based systems is conceptualized and measured. Nevertheless, a research gap cannot be established merely because a proposed taxonomy contains a category or because selected examples do not address it. The following directions are therefore evidence-motivated hypotheses, derived from representative studies, that will be tested against the fully screened and human-adjudicated corpus. We distinguish a missing method from a method that exists but lacks sufficient validation, and avoid treating lack of evidence in this preliminary synthesis as proof of absence.
 
 \subsection{Quality Attribution Across Stages}
-% Working hypothesis: rich component metrics but weak causal/cross-stage attribution.
+
+Many evaluation approaches quantify individual properties, while a system-level failure can involve interacting causes. Prompt-format variations affect downstream accuracy \cite{sclar2024formatting,chatterjee2024posix}; RAG evaluation frameworks distinguish retrieval and generation evidence \cite{es2024ragas,ru2024ragchecker}. These findings demonstrate meaningful cross-stage measurement, so it would be incorrect to claim that the literature ignores inter-stage relationships. A more specific question is whether measured relationships allow a failure to be attributed to one stage or interaction rather than simply displaying correlated scores.
+
+Future work could compare controlled interventions at multiple stages, preserve intermediate evidence, and report uncertainties in causal or diagnostic claims. For RQ3 and RQ6, our final mapping will distinguish co-reported scores, observational associations, intervention-based comparisons, and stronger attribution claims. Whether the latter are uncommon remains to be established empirically.
 
 \subsection{Reliability of Automated Evaluators}
-% Working hypothesis: widespread judge use exceeds evidence on judge reliability.
+
+LLM-based judgments enable scalable assessment, but their own behavior can change with the scoring rubric, model, or presentation protocol. G-Eval reports model-based scoring against human annotations \cite{liu2023geval}, while MT-bench examines judgment biases and agreement \cite{zheng2023mtbench}. Thus evaluator reliability is already an active research topic; the unresolved issue is how often validation accompanies the use of such instruments in other evaluation studies.
+
+Future protocols should identify the intended construct, report judge specifications, test repeatability and relevant perturbations, and compare with independently adjudicated examples when feasible. For RQ4, the corpus audit will distinguish studies that merely employ judges from those that systematically validate them. This distinction also applies to specialized learned evaluators and human annotation protocols.
 
 \subsection{Trace and Process Visibility}
-% Working hypothesis: final-response metrics miss important agent/process failures.
+
+Final-outcome evaluation is useful for verifying task completion, as shown by interactive benchmarks and executable software tasks \cite{jimenez2024swebench,zhou2024webarena}. Yet the terminal state alone may conceal poor plans, invalid intermediate actions, or excessive tool usage. AgentBoard and AgentJudge illustrate efforts to move beyond a single final success indicator \cite{ma2024agentboard,zhuge2025agentjudge}. The open question is not whether trace-aware evaluation exists, but how diagnostic evidence is connected to final outcomes and whether intermediate attribution claims are experimentally supported.
+
+A useful agenda includes standardized trace schemas, explicit intermediate success criteria, and controlled tests of proposed failure causes. Such protocols would make agent evaluations more actionable without presuming that every observable event is equally informative.
 
 \subsection{Operational Quality as Part of Overall Quality}
-% Working hypothesis: latency/cost/availability are often evaluated separately from
-% semantic and task-level quality.
+
+LLM-serving research already measures important deployment properties: PagedAttention/vLLM studies serving efficiency \cite{kwon2023vllm}, and DistServe investigates serving performance under latency-related objectives \cite{zhong2024distserve}. These metrics are necessary for usable systems. However, low latency or high throughput does not establish factuality, task completion, or interaction quality, just as high answer accuracy does not establish acceptable cost or availability.
+
+The research challenge is to evaluate quality under explicit operational constraints and characterize trade-offs rather than merely co-report independent numbers. RQ5 will examine which studies jointly test operational and semantic/task-level outcomes, and whether resource changes affect the measured quality of delivered results. No general claim about the rarity of such work is made until the corpus is coded.
 
 \subsection{Agreement Between Evaluation Frameworks}
-% Working hypothesis: different frameworks/evaluators can disagree substantially on
-% the same objects; investigate construct validity and calibration.
 
-\subsection{From Measurement Collections to Integrated Quality Models}
-% TODO: position the eventual PQI contribution only after evidence supports the gap.
-% Do not freeze weights or a final mathematical formulation before synthesis.
+Different evaluation frameworks may assign materially different scores to identical artifacts. Comparative RAG studies illustrate this problem \cite{cho2026graphene,neloy2026metarag}. Disagreement is not necessarily evidence that one evaluator is defective: distinct methods may assess relevance, faithfulness, correctness, or stylistic preference under different assumptions. Future evaluations should first harmonize constructs and protocols, then examine calibration, ranking stability, and agreement on common examples.
+
+This direction links RQ2 and RQ4: a measurement should be reproducible and construct-valid before it can be meaningfully aggregated into a system-wide quality claim. Meta-evaluation should also test robustness under domain and model shifts.
+
+\subsection{From Collections of Metrics to Integrated Quality Models}
+
+A unified quality index is a possible response to fragmented measurement, but aggregation is not automatically integration. A weighted average may obscure severe failure in a critical dimension, double-count correlated metrics, or prioritize properties that matter little to a given application. Frameworks such as HELM illustrate the benefits of multidimensional reporting \cite{liang2023helm}, while RAG-specific methods provide finer component evidence \cite{es2024ragas,ru2024ragchecker}. Neither multidimensionality nor fine granularity alone proves that an aggregate score is meaningful.
+
+An integrated model should specify its quality constructs, the source and reliability of each metric, dependency assumptions, aggregation rules, and treatment of missing or inapplicable measures. Weights may reflect domain-specific requirements, expert elicitation, empirical calibration, or decision constraints; their choice should be documented and sensitivity-tested. Critical failures may require non-compensatory rules rather than a compensating numerical score. These requirements also suggest that an explanatory model of cross-stage relationships and a decision-oriented summary index should be evaluated separately.
+
+\subsection{Research Agenda and Evidence Requirements}
+
+Table~\ref{tab:gaps-agenda} summarizes testable candidate gaps and the evidence needed to determine whether each is supported by the complete review. We will revise or remove these hypotheses if the final corpus contradicts them. The objective is an evidence-based agenda, not a declaration that particular methods are missing from an incompletely audited literature.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Candidate gaps and planned tests against the completed systematic mapping. These are hypotheses, not established corpus-wide frequencies.}
+\label{tab:gaps-agenda}
+\begin{tabular}{p{0.19\textwidth} p{0.29\textwidth} p{0.34\textwidth} p{0.09\textwidth}}
+\toprule
+\textbf{Direction} & \textbf{Candidate limitation} & \textbf{Evidence required from the corpus} & \textbf{RQ} \\
+\midrule
+Stage attribution & Multiple metrics without diagnosed dependencies & Cross-stage links, interventions, attribution evidence & RQ3, RQ6 \\
+Evaluator reliability & Use of judges without direct validation & Judge usage and separate reliability-testing codes & RQ4 \\
+Process observability & Terminal success without intermediate analysis & Trace availability, trace scoring, failure diagnosis & RQ3, RQ6 \\
+Operational integration & Serving metrics disconnected from task quality & Joint operational and semantic/task evaluations & RQ5 \\
+Framework consistency & Incompatible scores for nominally similar constructs & Shared-example comparisons, construct definitions, calibration & RQ2, RQ4 \\
+Integrated models & Aggregated scores without justified dependencies & Aggregation rules, weights, sensitivity and trade-off analysis & RQ3, RQ6 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The resulting agenda is deliberately conditional. The survey's contribution will be strongest when it demonstrates not merely which evaluation mechanisms exist, but which quality claims have been validated, which relationships have been measured, and which apparently integrated proposals remain conceptual rather than experimentally substantiated.
