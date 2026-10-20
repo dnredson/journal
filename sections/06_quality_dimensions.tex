@@ -6,12 +6,53 @@ This section will contain the evidence-driven synthesis of the academic corpus a
 \subsection{Input and Specification Quality}
 \label{sec:input-quality}
 
-% TODO:
-% - Prompt sensitivity and robustness.
-% - Instruction/specification quality.
-% - Prompt optimization and perturbation.
-% - Distinguish prompt use from prompt-quality evaluation.
-% - Synthesize evidence linking input variation to downstream output quality.
+\paragraph{Scope and construct.}
+Input and specification quality concerns the conditions under which an intended task is communicated to an LLM-based system. Relevant properties include the clarity and completeness of instructions, consistency under meaning-preserving reformulations, sensitivity to prompt templates and examples, and the effectiveness of prompt optimization. Importantly, the object of assessment is not always an intrinsically good or bad prompt. In many studies, the measured construct is instead the \emph{relationship} between input design and subsequent model behavior. A well-formed specification can still yield an incorrect response, just as an underspecified request can occasionally produce a plausible one. Observing a poor output therefore does not by itself establish whether the failure arose from the input or the model.
+
+A useful operational separation is between \emph{sensitivity analysis}, which measures how behavior changes under controlled prompt variations, and \emph{prompt optimization}, which searches for input formulations that improve a target outcome. Both often rely on downstream task performance, but they support different claims. Sensitivity studies test stability or measurement validity; optimization studies seek a better-performing input under a specified objective. Neither automatically measures the general clarity, completeness, or user-level adequacy of a task specification.
+
+\paragraph{Sensitivity to meaning-preserving variation.}
+Sclar et al.\ demonstrate that apparently inconsequential formatting choices can substantially change few-shot LLM performance \cite{sclar2024formatting}. Their ICLR study reports differences as large as 76 accuracy points for a tested LLaMA-2-13B setting and introduces \emph{FormatSpread} to characterize performance across sampled plausible formats. The methodological lesson is not that every model exhibits the same magnitude of sensitivity, but that a benchmark result obtained with a single arbitrary template can confound model capability with prompt design. Because format preferences transfer only weakly across models in their experiments, using one common prompt is not necessarily a neutral comparison protocol.
+
+Chatterjee et al.\ make prompt stability more explicit as a measurable property through \emph{POSIX}, an index based on relative changes in response log-likelihood under intent-preserving prompt substitutions \cite{chatterjee2024posix}. Their experiments examine wording, spelling, templates, and few-shot exemplars. They report that larger model size or instruction tuning does not necessarily remove sensitivity, while the most disruptive type of change depends on the task: template alterations are especially influential for multiple-choice questions, whereas paraphrases can be more consequential for open-ended generation. POSIX illustrates a different evaluation strategy from task-accuracy spread: it measures changes in the model's support for a response, rather than simply comparing final task scores.
+
+Liu and Chu extend this line of inquiry with an analytical account of prompt sensitivity \cite{liu2026promptsensitivity}. Using a first-order Taylor approximation of next-token log probabilities, they derive a bound that relates changes in hidden-state representations to changes in output probabilities. Their experiments connect the bound to an existing sensitivity measure and find that prompt templates can affect logits more strongly than the question content in the studied settings. The contribution is primarily \emph{explanatory}: it links input perturbations to internal representations and token-level behavior, rather than proposing a general-purpose measure of specification clarity. Together, these studies suggest that prompt stability is a system-dependent property requiring controlled variation and explicit reporting of the associated output measure.
+
+\paragraph{Optimization and the meaning of a better prompt.}
+Prompt optimization takes a complementary perspective. Pryzant et al.\ propose ProTeGi, which uses natural-language critiques of errors on minibatches as textual gradients, edits prompts accordingly, and uses beam search and bandit selection to explore candidates \cite{pryzant2023protegi}. Yang et al.\ introduce Optimization by PROmpting (OPRO), in which an LLM generates candidate instructions from a history of candidate solutions and their evaluated scores \cite{yang2024opro}. Both approaches demonstrate that performance is responsive to prompt design, but their objectives are task-specific: an optimized prompt is better \emph{with respect to a chosen metric, model, and evaluation set}, not necessarily clearer or more reliable for every task or user.
+
+This qualification is not merely theoretical. Zhang et al.\ revisit OPRO with smaller models and report limited effectiveness relative to the setting in which the method was initially demonstrated \cite{zhang2024revisitingopro}. The result cautions against treating prompt-optimization gains as model-agnostic. It also exposes a practical tension: iterative optimization can consume evaluations and model calls, so the benefit of a better final prompt may need to be balanced against search cost. Ramnath et al.\ provide a peer-reviewed synthesis of automatic prompt optimization techniques and organize the design space with a five-part unifying framework \cite{ramnath2025aposurvey}. That survey is important secondary evidence for optimization methods, but it should not be counted as a separate empirical validation of every method it reviews.
+
+\paragraph{From prompt-level assessment to system-level quality.}
+The studies above show that input-related properties are commonly evaluated through \emph{downstream signals}: accuracy differences across prompt variants, relative token log-likelihood, or improvements in task scores after optimization. This is valuable cross-stage evidence because it explicitly links input choices to model behavior. It is not, however, equivalent to a complete evaluation of an LLM-based application. For example, Khattab et al.\ introduce DSPy to compile and optimize language-model pipelines against an objective, including settings with multistep reasoning and retrieval \cite{khattab2024dspy}. Their contribution moves beyond an isolated prompt string, yet pipeline-level improvement should not automatically be interpreted as attribution of quality to every internal stage.
+
+Table~\ref{tab:input-quality-studies} compares representative contributions along the distinction between \emph{input intervention}, \emph{measurement mechanism}, and \emph{evidence actually produced}. The entries are illustrative, not a frequency estimate for our final screened corpus.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Representative peer-reviewed research on input and specification quality. These are qualitative evidence summaries; final study counts and integration labels will follow the corpus audit.}
+\label{tab:input-quality-studies}
+\begin{tabular}{p{0.18\textwidth} p{0.21\textwidth} p{0.25\textwidth} p{0.25\textwidth}}
+\toprule
+\textbf{Study} & \textbf{Input intervention or target} & \textbf{Evaluation signal / method} & \textbf{What the evidence supports} \\
+\midrule
+Sclar et al.\ \cite{sclar2024formatting} & Meaning-preserving few-shot formatting & Performance variation; FormatSpread & Sensitivity of benchmark results to format selection \\
+Chatterjee et al.\ \cite{chatterjee2024posix} & Templates, paraphrases, spelling and examples & Relative response log-likelihood; POSIX & Quantification of prompt sensitivity across conditions \\
+Liu and Chu \cite{liu2026promptsensitivity} & Meaning-preserving prompt changes & Taylor-based bound, hidden states and token probabilities & Mechanistic account of prompt-to-output sensitivity \\
+Pryzant et al.\ \cite{pryzant2023protegi} & Automatic instruction editing & Textual feedback, beam/bandit search and task scores & Task-specific improvement from prompt optimization \\
+Yang et al.\ \cite{yang2024opro} & Iteratively generated instructions & Candidate-score feedback; downstream accuracy & Prompt optimization under a defined task objective \\
+Zhang et al.\ \cite{zhang2024revisitingopro} & OPRO with smaller LLMs & Comparative downstream performance & Model-dependence and limitations of optimization gains \\
+Khattab et al.\ \cite{khattab2024dspy} & Declarative prompts within multi-step pipelines & Compiled pipeline performance on task metrics & Pipeline optimization, not necessarily per-stage attribution \\
+Ramnath et al.\ \cite{ramnath2025aposurvey} & Automatic prompt optimization literature & Secondary-study taxonomy and synthesis & Map of method families; not independent primary validation \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Synthesis and implications for integration.}
+Three distinctions follow from this initial evidence. First, \emph{robustness to meaning-preserving prompts} is different from \emph{maximizing performance for one selected prompt}; high peak accuracy may coexist with high sensitivity. Second, performance-based prompt evaluation typically mixes properties of the input and of the model, so reporting the prompt variants, underlying evaluator, and task metric is necessary for interpretable comparisons. Third, demonstrating that prompt changes affect task outcomes provides evidence of an input-to-output relationship, but does not by itself establish lifecycle-integrated quality assessment involving retrieval, process traces, evaluator reliability, or operational constraints.
+
+For the present survey, we will therefore code input quality only when input properties are deliberately measured, perturbed, optimized, or explicitly related to downstream quality. We will record the downstream metric separately from the input property, and distinguish observed cross-stage relationships from black-box final-task scoring. Whether this literature systematically underrepresents clarity, completeness, user intent, or deployment-aware prompt assessment remains an \emph{open empirical question} until the complete peer-reviewed corpus is audited.
 
 \subsection{Context and Retrieval Quality}
 \label{sec:context-quality}
